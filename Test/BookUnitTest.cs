@@ -49,5 +49,27 @@ namespace Test
             Assert.True(books.SequenceEqual(fakeDatabase.ShowAllBooksInDB()));
             Assert.IsNotNull(books);
         }
+
+        [Test]
+        public void When_Method_UpdateBookIsCalledThenBookIsUpdatedWithNewTitleAndDescription()
+        {
+            //Arrange
+            var fakeDatabase = new FakeDatabase();
+            var bookMethod = new BookMethods(fakeDatabase);
+            var book = new Book(1, "Old Title", "Old description");
+            fakeDatabase.AddNewBookToDB(book);
+
+            string simulatedInput = "New Title\nNew Description\n";
+            Console.SetIn(new StringReader(simulatedInput));
+
+            //Act
+            Book updatedBook = bookMethod.UpdateBook(1);
+
+            //Assert
+            Assert.IsNotNull(updatedBook);
+            Assert.AreEqual("New Title", updatedBook.Title);
+            Assert.AreEqual("New Description", updatedBook.Description);
+
+        }
     }
 }

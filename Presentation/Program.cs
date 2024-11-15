@@ -17,7 +17,8 @@ namespace Presentation
                 Console.WriteLine("What do you want to do? Answer by number");
                 Console.WriteLine("1. Add a new book to my collection");
                 Console.WriteLine("2. See all your books");
-                Console.WriteLine("3. Quit");
+                Console.WriteLine("3. Update a book");
+                Console.WriteLine("4. Quit");
                 Console.WriteLine();
 
                 string input = Console.ReadLine();
@@ -34,6 +35,13 @@ namespace Presentation
                         break;
 
                     case "3":
+                        Console.WriteLine("Choose a book to update by it´s ID:");
+                        bookMethods.PrintBooks();
+                        int bookIdToUpdate = int.Parse(Console.ReadLine());
+                        bookMethods.UpdateBook(bookIdToUpdate);
+                        break;
+
+                    case "4":
                         quit = true;
                         break;
 

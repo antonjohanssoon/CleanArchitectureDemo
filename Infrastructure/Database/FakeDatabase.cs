@@ -24,5 +24,15 @@ namespace Infrastructure.Database
             return Books.ToList();
         }
 
+        public void UpdateBookInDB(Book updatedBook)
+        {
+            var bookToUpdate = Books.FirstOrDefault(b => b.Id == updatedBook.Id);
+            if (bookToUpdate != null)
+            {
+                bookToUpdate.Title = updatedBook.Title;
+                bookToUpdate.Description = updatedBook.Description;
+            }
+        }
+
     }
 }
