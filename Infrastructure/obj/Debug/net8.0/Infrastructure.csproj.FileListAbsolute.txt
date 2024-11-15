@@ -13,3 +13,4 @@ C:\Users\johan\OneDrive\Dokument\Systemutveckling\Avancerad programmering\CleanA
 C:\Users\johan\OneDrive\Dokument\Systemutveckling\Avancerad programmering\CleanArchitectureDemo\Infrastructure\obj\Debug\net8.0\refint\Infrastructure.dll
 C:\Users\johan\OneDrive\Dokument\Systemutveckling\Avancerad programmering\CleanArchitectureDemo\Infrastructure\obj\Debug\net8.0\Infrastructure.pdb
 C:\Users\johan\OneDrive\Dokument\Systemutveckling\Avancerad programmering\CleanArchitectureDemo\Infrastructure\obj\Debug\net8.0\ref\Infrastructure.dll
+C:\Users\johan\OneDrive\Dokument\Systemutveckling\Avancerad programmering\CleanArchitectureDemo\Infrastructure\obj\Debug\net8.0\Infrastructure.sourcelink.json
