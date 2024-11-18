@@ -3,6 +3,10 @@
   "WorkspaceRootPath": "C:\\Users\\johan\\OneDrive\\Dokument\\Systemutveckling\\Avancerad programmering\\CleanArchitectureDemo\\",
   "Documents": [
     {
+      "AbsoluteMoniker": "D:0:0:{9937A8CA-5BA6-4491-9BC6-7A69A21FC6BA}|Infrastructure\\Infrastructure.csproj|c:\\users\\johan\\onedrive\\dokument\\systemutveckling\\avancerad programmering\\cleanarchitecturedemo\\infrastructure\\database\\fakedatabase.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{9937A8CA-5BA6-4491-9BC6-7A69A21FC6BA}|Infrastructure\\Infrastructure.csproj|solutionrelative:infrastructure\\database\\fakedatabase.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{BD56D058-F0BA-480E-A900-D0F6EA9C5473}|Test\\Test.csproj|c:\\users\\johan\\onedrive\\dokument\\systemutveckling\\avancerad programmering\\cleanarchitecturedemo\\test\\bookunittest.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{BD56D058-F0BA-480E-A900-D0F6EA9C5473}|Test\\Test.csproj|solutionrelative:test\\bookunittest.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
@@ -13,10 +17,6 @@
     {
       "AbsoluteMoniker": "D:0:0:{0121F3FB-F75C-4970-B3BA-809A75A777AC}|Presentation\\Presentation.csproj|c:\\users\\johan\\onedrive\\dokument\\systemutveckling\\avancerad programmering\\cleanarchitecturedemo\\presentation\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{0121F3FB-F75C-4970-B3BA-809A75A777AC}|Presentation\\Presentation.csproj|solutionrelative:presentation\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{9937A8CA-5BA6-4491-9BC6-7A69A21FC6BA}|Infrastructure\\Infrastructure.csproj|c:\\users\\johan\\onedrive\\dokument\\systemutveckling\\avancerad programmering\\cleanarchitecturedemo\\infrastructure\\database\\fakedatabase.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{9937A8CA-5BA6-4491-9BC6-7A69A21FC6BA}|Infrastructure\\Infrastructure.csproj|solutionrelative:infrastructure\\database\\fakedatabase.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{F6F33066-48F3-48A2-B2FD-CD5040DFC6D3}|Domain\\Domain.csproj|c:\\users\\johan\\onedrive\\dokument\\systemutveckling\\avancerad programmering\\cleanarchitecturedemo\\domain\\book.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
@@ -30,7 +30,7 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 5,
+          "SelectedChildIndex": 3,
           "Children": [
             {
               "$type": "Bookmark",
@@ -46,52 +46,51 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 0,
               "Title": "FakeDatabase.cs",
               "DocumentMoniker": "C:\\Users\\johan\\OneDrive\\Dokument\\Systemutveckling\\Avancerad programmering\\CleanArchitectureDemo\\Infrastructure\\Database\\FakeDatabase.cs",
               "RelativeDocumentMoniker": "Infrastructure\\Database\\FakeDatabase.cs",
-              "ToolTip": "C:\\Users\\johan\\OneDrive\\Dokument\\Systemutveckling\\Avancerad programmering\\CleanArchitectureDemo\\Infrastructure\\Database\\FakeDatabase.cs",
-              "RelativeToolTip": "Infrastructure\\Database\\FakeDatabase.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAACMAAAAAAAAAAAAAAA==",
+              "ToolTip": "C:\\Users\\johan\\OneDrive\\Dokument\\Systemutveckling\\Avancerad programmering\\CleanArchitectureDemo\\Infrastructure\\Database\\FakeDatabase.cs*",
+              "RelativeToolTip": "Infrastructure\\Database\\FakeDatabase.cs*",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAACkAAAAFAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2024-11-14T12:21:44.296Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 3,
               "Title": "Program.cs",
               "DocumentMoniker": "C:\\Users\\johan\\OneDrive\\Dokument\\Systemutveckling\\Avancerad programmering\\CleanArchitectureDemo\\Presentation\\Program.cs",
               "RelativeDocumentMoniker": "Presentation\\Program.cs",
               "ToolTip": "C:\\Users\\johan\\OneDrive\\Dokument\\Systemutveckling\\Avancerad programmering\\CleanArchitectureDemo\\Presentation\\Program.cs",
               "RelativeToolTip": "Presentation\\Program.cs",
-              "ViewState": "AgIAAAUAAAAAAAAAAAAxwCUAAABNAAAAAAAAAA==",
+              "ViewState": "AgIAAAUAAAAAAAAAAAAxwCwAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-11-14T12:46:16.727Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-11-14T12:46:16.727Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 1,
               "Title": "BookUnitTest.cs",
               "DocumentMoniker": "C:\\Users\\johan\\OneDrive\\Dokument\\Systemutveckling\\Avancerad programmering\\CleanArchitectureDemo\\Test\\BookUnitTest.cs",
               "RelativeDocumentMoniker": "Test\\BookUnitTest.cs",
-              "ToolTip": "C:\\Users\\johan\\OneDrive\\Dokument\\Systemutveckling\\Avancerad programmering\\CleanArchitectureDemo\\Test\\BookUnitTest.cs*",
-              "RelativeToolTip": "Test\\BookUnitTest.cs*",
-              "ViewState": "AgIAACEAAAAAAAAAAAAowEAAAAARAAAAAAAAAA==",
+              "ToolTip": "C:\\Users\\johan\\OneDrive\\Dokument\\Systemutveckling\\Avancerad programmering\\CleanArchitectureDemo\\Test\\BookUnitTest.cs",
+              "RelativeToolTip": "Test\\BookUnitTest.cs",
+              "ViewState": "AgIAADsAAAAAAAAAAAAIwFsAAAAJAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2024-11-14T12:03:18.727Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 2,
               "Title": "BookMethods.cs",
               "DocumentMoniker": "C:\\Users\\johan\\OneDrive\\Dokument\\Systemutveckling\\Avancerad programmering\\CleanArchitectureDemo\\Application\\BookMethods.cs",
               "RelativeDocumentMoniker": "Application\\BookMethods.cs",
-              "ToolTip": "C:\\Users\\johan\\OneDrive\\Dokument\\Systemutveckling\\Avancerad programmering\\CleanArchitectureDemo\\Application\\BookMethods.cs",
-              "RelativeToolTip": "Application\\BookMethods.cs",
-              "ViewState": "AgIAAB0AAAAAAAAAAAA9wE0AAAAJAAAAAAAAAA==",
+              "ToolTip": "C:\\Users\\johan\\OneDrive\\Dokument\\Systemutveckling\\Avancerad programmering\\CleanArchitectureDemo\\Application\\BookMethods.cs*",
+              "RelativeToolTip": "Application\\BookMethods.cs*",
+              "ViewState": "AgIAAE8AAAAAAAAAAAAcwG0AAABBAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2024-11-14T12:01:14.161Z",
               "EditorCaption": ""

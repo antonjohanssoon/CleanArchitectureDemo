@@ -34,5 +34,10 @@ namespace Infrastructure.Database
             }
         }
 
+        public Book DeleteBookInDB(Book bookToDelete)
+        {
+            allBooksInDB.Remove(bookToDelete);
+            return bookToDelete;
+        }
     }
 }
