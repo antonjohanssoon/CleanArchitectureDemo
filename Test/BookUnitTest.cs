@@ -71,5 +71,24 @@ namespace Test
             Assert.AreEqual("New Description", updatedBook.Description);
 
         }
+
+        [Test]
+        public void When_Method_DeleteBookIsCalledThenBookIsDeletedFromDB()
+        {
+            //Arrange
+            var fakeDatabase = new FakeDatabase();
+            var bookMethod = new BookMethods(fakeDatabase);
+            var book1 = new Book(1, "Old Book", "Old description");
+            fakeDatabase.AddNewBookToDB(book1);
+
+            //Act
+            Book bookToDelete = bookMethod.DeleteBook(1);
+
+            //Assert
+            Assert.IsFalse(fakeDatabase.Books.Contains(book1));
+            Assert.AreEqual(book1, bookToDelete);
+            Assert.AreEqual(3, fakeDatabase.Books.Count);
+
+        }
     }
 }
