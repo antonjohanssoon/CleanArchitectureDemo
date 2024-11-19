@@ -1,9 +1,6 @@
-﻿using Application;
-using Infrastructure.Database;
-
-namespace Presentation
+﻿namespace Presentation
 {
-    internal class Program
+    /*internal class Program
     {
         static void Main(string[] args)
         {
@@ -46,11 +43,11 @@ namespace Presentation
                         break;
 
                     default:
-                        Console.WriteLine("Nu förstod jag inte riktigt?");
+                        Console.WriteLine("Now I didn´t understand your command?");
                         break;
                 }
             }
 
         }
-    }
+    }*/
 }
