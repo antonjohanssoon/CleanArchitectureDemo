@@ -1,120 +1,51 @@
-﻿using Domain;
+﻿using Application.Commands.Books.AddBook;
+using Application.Commands.Books.DeleteBook;
+using Application.Commands.Books.UpdateBook;
+using Application.Queries.GetBook;
+using Domain;
 using Infrastructure.Database;
+using MediatR;
 
 namespace Application
 {
     public class BookMethods
     {
         private readonly FakeDatabase fakeDatabase;
+        private readonly IMediator mediator;
 
-        public BookMethods(FakeDatabase fakeDatabase)
+        public BookMethods(FakeDatabase fakeDatabase, IMediator mediator)
         {
             this.fakeDatabase = fakeDatabase;
+            this.mediator = mediator;
         }
 
-        public Book AddNewBook()
+        public async Task AddNewBook(Book book)
         {
-            try
-            {
-                Console.WriteLine("Give your book an ID:");
-                if (!int.TryParse(Console.ReadLine(), out int idInput))
-                {
-                    throw new ArgumentException("Invalid ID format. Please enter a valid number.");
-                }
-
-                Console.WriteLine("What’s the title of the book?");
-                string titleInput = Console.ReadLine();
-                if (string.IsNullOrWhiteSpace(titleInput))
-                {
-                    throw new ArgumentException("Title cannot be empty.");
-                }
-
-                Console.WriteLine("Add a description about your book:");
-                string descriptionInput = Console.ReadLine();
-                if (string.IsNullOrWhiteSpace(descriptionInput))
-                {
-                    throw new ArgumentException("Description cannot be empty.");
-                }
-
-                Book newBookToAdd = new Book(idInput, titleInput, descriptionInput);
-                return fakeDatabase.AddNewBookToDB(newBookToAdd);
-            }
-            catch (ArgumentException ex)
-            {
-                Console.WriteLine("Input error: " + ex.Message);
-                return null;
-            }
+            Book newBookToAdd = new Book(10, "Antons book", "A book about Antons life");
+            await mediator.Send(new AddBookCommand(newBookToAdd));
         }
 
-        public List<Book> GetBooks()
+        public async Task<List<Book>> GetBooks()
         {
-            return fakeDatabase.ShowAllBooksInDB();
+            var books = await mediator.Send(new GetAllBooksFromDBQuery());
+            return books;
         }
 
-        public void PrintBooks()
+        public async Task<Book> GetBookByID(int bookId)
         {
-            var books = GetBooks();
-            foreach (var book in books)
-            {
-                Console.WriteLine($"Id: {book.Id} Title: {book.Title}");
-            }
+            var book = await mediator.Send(new GetBookByIdQuery(bookId));
+            return book;
         }
 
-        public Book UpdateBook(int bookId)
+        public async Task UpdateBook(int bookId)
         {
-            try
-            {
-                Book bookToUpdate = fakeDatabase.Books.FirstOrDefault(b => b.Id == bookId);
+            await mediator.Send(new UpdateBookByIdCommand(bookId, "Nalle Puh", "A cute yellow bear"));
 
-                if (bookToUpdate == null)
-                {
-                    Console.WriteLine("Book not found!");
-                    return null;
-                }
-
-                Console.WriteLine("Update book title (current: " + bookToUpdate.Title + "): ");
-                string newTitle = Console.ReadLine();
-                if (!string.IsNullOrEmpty(newTitle))
-                {
-                    bookToUpdate.Title = newTitle;
-                }
-
-                Console.WriteLine("Update book description (current: " + bookToUpdate.Description + "): ");
-                string newDescription = Console.ReadLine();
-                if (!string.IsNullOrEmpty(newDescription))
-                {
-                    bookToUpdate.Description = newDescription;
-                }
-
-                fakeDatabase.UpdateBookInDB(bookToUpdate);
-                return bookToUpdate;
-            }
-            catch (Exception)
-            {
-                Console.WriteLine("An error occurred when updating the book.");
-                return null;
-            }
         }
 
-        public Book DeleteBook(int bookId)
+        public async Task DeleteBook(int bookId)
         {
-            try
-            {
-                Book bookToDelete = fakeDatabase.Books.FirstOrDefault(b => b.Id == bookId);
-
-                if (bookToDelete == null)
-                {
-                    Console.WriteLine("Book not found");
-                }
-
-                return fakeDatabase.DeleteBookInDB(bookToDelete);
-            }
-
-            catch (Exception)
-            {
-                Console.WriteLine("An error occurred when deleting the book");
-                return null;
-            }
+            await mediator.Send(new DeleteBookByIdCommand(bookId));
         }
 
     }

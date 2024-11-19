@@ -396,3 +396,18 @@ FodyWeavers.xsd
 
 # JetBrains Rider
 *.sln.iml
+
+# Ignore obj and bin folders
+obj/
+bin/
+
+# Ignore .vs folder (Visual Studio temporary files)
+.vs/
+
+# Ignore other temporary files
+*.cache
+*.AssemblyReference.cache
+*.user
+*.log
+
+
