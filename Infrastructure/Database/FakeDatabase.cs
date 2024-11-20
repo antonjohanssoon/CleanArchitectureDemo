@@ -5,6 +5,8 @@ namespace Infrastructure.Database
     public class FakeDatabase
     {
         public List<Book> Books { get { return allBooksInDB; } set { allBooksInDB = value; } }
+        public List<Author> Authors { get { return allAuthorsInDB; } set { allAuthorsInDB = value; } }
+
 
         private List<Book> allBooksInDB = new List<Book>
         {
@@ -13,31 +15,11 @@ namespace Infrastructure.Database
             new Book(4, "The Hobbit", "Adventure to the lonely mountain")
         };
 
-        public Book AddNewBookToDB(Book book)
+        private List<Author> allAuthorsInDB = new List<Author>
         {
-            allBooksInDB.Add(book);
-            return book;
-        }
-
-        public List<Book> ShowAllBooksInDB()
-        {
-            return Books.ToList();
-        }
-
-        public void UpdateBookInDB(Book updatedBook)
-        {
-            var bookToUpdate = Books.FirstOrDefault(b => b.Id == updatedBook.Id);
-            if (bookToUpdate != null)
-            {
-                bookToUpdate.Title = updatedBook.Title;
-                bookToUpdate.Description = updatedBook.Description;
-            }
-        }
-
-        public Book DeleteBookInDB(Book bookToDelete)
-        {
-            allBooksInDB.Remove(bookToDelete);
-            return bookToDelete;
-        }
+            new Author(1, "J.R.R. Tolkien", "Adventure"),
+            new Author(2, "J.K. Rowling", "Magic"),
+            new Author(3, "Camilla Läckberg", "Detective")
+        };
     }
 }
