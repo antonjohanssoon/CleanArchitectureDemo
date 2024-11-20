@@ -17,7 +17,17 @@ namespace Application.Commands.Books.DeleteBook
         {
             Book bookToDelete = fakeDatabase.Books.FirstOrDefault(book => book.Id == request.Id);
 
+            if (bookToDelete == null)
+            {
+                throw new Exception($"Book with ID: {request.Id} not found.");
+            }
+
             fakeDatabase.Books.Remove(bookToDelete);
+
+            if (fakeDatabase.Books.Contains(bookToDelete))
+            {
+                throw new Exception($"Failed to delete book with ID: {request.Id}.");
+            }
             return Task.FromResult(bookToDelete);
         }
     }

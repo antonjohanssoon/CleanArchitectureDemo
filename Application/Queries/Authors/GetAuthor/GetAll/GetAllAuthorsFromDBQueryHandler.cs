@@ -15,6 +15,11 @@ namespace Application.Queries.Authors.GetAuthor.GetAll
 
         public Task<List<Author>> Handle(GetAllAuthorsFromDBQuery request, CancellationToken cancellationToken)
         {
+            if (fakeDatabase.Authors.Count == 0)
+            {
+                throw new Exception($"Your list of authors is empty");
+            }
+
             return Task.FromResult(fakeDatabase.Authors);
         }
     }

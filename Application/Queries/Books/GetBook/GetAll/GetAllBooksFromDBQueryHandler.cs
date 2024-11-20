@@ -15,6 +15,11 @@ namespace Application.Queries.Books.GetBook.GetAll
 
         public Task<List<Book>> Handle(GetAllBooksFromDBQuery request, CancellationToken cancellationToken)
         {
+            if (fakeDatabase.Books.Count == 0)
+            {
+                throw new Exception($"Your list of books is empty");
+            }
+
             return Task.FromResult(fakeDatabase.Books);
         }
     }
