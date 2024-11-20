@@ -1,21 +1,20 @@
 ﻿using Application.Commands.Books.AddBook;
 using Application.Commands.Books.DeleteBook;
 using Application.Commands.Books.UpdateBook;
-using Application.Queries.GetBook;
+using Application.Queries.Books.GetBook.GetAll;
+using Application.Queries.Books.GetBook.GetById;
 using Domain;
-using Infrastructure.Database;
 using MediatR;
 
 namespace Application
 {
     public class BookMethods
     {
-        private readonly FakeDatabase fakeDatabase;
         private readonly IMediator mediator;
 
-        public BookMethods(FakeDatabase fakeDatabase, IMediator mediator)
+        public BookMethods(IMediator mediator)
         {
-            this.fakeDatabase = fakeDatabase;
+
             this.mediator = mediator;
         }
 
@@ -37,9 +36,9 @@ namespace Application
             return book;
         }
 
-        public async Task UpdateBook(int bookId)
+        public async Task UpdateBook(int bookId, Book updatedBook)
         {
-            await mediator.Send(new UpdateBookByIdCommand(bookId, "Nalle Puh", "A cute yellow bear"));
+            await mediator.Send(new UpdateBookByIdCommand(bookId, updatedBook));
 
         }
 

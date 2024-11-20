@@ -17,8 +17,8 @@ namespace Application.Commands.Books.UpdateBook
         {
             Book bookToUpdate = fakeDatabase.Books.FirstOrDefault(book => book.Id == request.Id);
 
-            bookToUpdate.Title = request.Title;
-            bookToUpdate.Description = request.Description;
+            bookToUpdate.Title = request.UpdatedBook.Title;
+            bookToUpdate.Description = request.UpdatedBook.Description;
 
             return Task.FromResult(bookToUpdate);
         }

@@ -1,7 +1,8 @@
 ﻿using Application.Commands.Books.AddBook;
 using Application.Commands.Books.DeleteBook;
 using Application.Commands.Books.UpdateBook;
-using Application.Queries.GetBook;
+using Application.Queries.Books.GetBook.GetAll;
+using Application.Queries.Books.GetBook.GetById;
 using Domain;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -14,7 +15,7 @@ namespace WebApi.Controllers
     [ApiController]
     public class BookController : ControllerBase
     {
-        private readonly IMediator mediator;
+        internal readonly IMediator mediator;
 
         public BookController(IMediator mediator)
         {
@@ -23,38 +24,42 @@ namespace WebApi.Controllers
 
         // GET: api/<BookController>
         [HttpGet]
-        public Task<List<Book>> GetAllBooks()
+        [Route("getAllBooks")]
+        public async Task<IActionResult> GetAllBooks()
         {
-            return mediator.Send(new GetAllBooksFromDBQuery());
+            return Ok(await mediator.Send(new GetAllBooksFromDBQuery()));
         }
 
         // GET api/<BookController>/5
-        [HttpGet("{id}")]
-        public Task<Book> GetBookById(int bookId)
+        [HttpGet]
+        [Route("getBookById/{bookId}")]
+        public async Task<IActionResult> GetBookById(int bookId)
         {
-            return mediator.Send(new GetBookByIdQuery(bookId));
+            return Ok(await mediator.Send(new GetBookByIdQuery(bookId)));
         }
 
         // POST api/<BookController>
         [HttpPost]
-        public async void Post([FromBody] Book bookToAdd)
+        [Route("addNewBook")]
+        public async Task<IActionResult> AddNewBook([FromBody] Book newBook)
         {
-            await mediator.Send(new AddBookCommand(bookToAdd));
+            return Ok(await mediator.Send(new AddBookCommand(newBook)));
         }
 
         // PUT api/<BookController>/5
-        [HttpPut("{id}")]
-        public async Task<Book> Put(int id, [FromBody] Book bookToUpdate)
+        [HttpPut]
+        [Route("updateBook/{updatedBookId}")]
+        public async Task<IActionResult> UpdateBook(int updatedBookId, [FromBody] Book updatedBook)
         {
-            Book updatedBook = await mediator.Send(new UpdateBookByIdCommand(id, bookToUpdate.Title, bookToUpdate.Description));
-            return updatedBook;
+            return Ok(await mediator.Send(new UpdateBookByIdCommand(updatedBookId, updatedBook)));
         }
 
         // DELETE api/<BookController>/5
-        [HttpDelete("{id}")]
-        public async void Delete(int bookId)
+        [HttpDelete]
+        [Route("deleteBookById/{bookId}")]
+        public async Task<IActionResult> DeleteBookById(int bookId)
         {
-            await mediator.Send(new DeleteBookByIdCommand(bookId));
+            return Ok(await mediator.Send(new DeleteBookByIdCommand(bookId)));
         }
     }
 }

@@ -2,7 +2,7 @@
 using Infrastructure.Database;
 using MediatR;
 
-namespace Application.Queries.GetBook
+namespace Application.Queries.Books.GetBook.GetById
 {
     public class GetBookByIdQueryHandler : IRequestHandler<GetBookByIdQuery, Book>
     {
