@@ -1,4 +1,7 @@
 ﻿using Application.Commands.Books.AddBook;
+using Application.Commands.Books.DeleteBook;
+using Application.Commands.Books.UpdateBook;
+using Application.Queries.GetBook;
 using Domain;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -18,20 +21,18 @@ namespace WebApi.Controllers
             this.mediator = mediator;
         }
 
-
-
         // GET: api/<BookController>
         [HttpGet]
-        public IEnumerable<string> Get()
+        public Task<List<Book>> GetAllBooks()
         {
-            return new string[] { "value1", "value2" };
+            return mediator.Send(new GetAllBooksFromDBQuery());
         }
 
         // GET api/<BookController>/5
         [HttpGet("{id}")]
-        public string Get(int id)
+        public Task<Book> GetBookById(int bookId)
         {
-            return "value";
+            return mediator.Send(new GetBookByIdQuery(bookId));
         }
 
         // POST api/<BookController>
@@ -43,14 +44,17 @@ namespace WebApi.Controllers
 
         // PUT api/<BookController>/5
         [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
+        public async Task<Book> Put(int id, [FromBody] Book bookToUpdate)
         {
+            Book updatedBook = await mediator.Send(new UpdateBookByIdCommand(id, bookToUpdate.Title, bookToUpdate.Description));
+            return updatedBook;
         }
 
         // DELETE api/<BookController>/5
         [HttpDelete("{id}")]
-        public void Delete(int id)
+        public async void Delete(int bookId)
         {
+            await mediator.Send(new DeleteBookByIdCommand(bookId));
         }
     }
 }
