@@ -23,12 +23,6 @@ namespace Application.Commands.Authors.DeleteAuthor
             }
 
             fakeDatabase.Authors.Remove(authorToDelete);
-
-            if (fakeDatabase.Authors.Contains(authorToDelete))
-            {
-                throw new Exception($"Failed to delete author with ID: {request.Id}.");
-            }
-
             return Task.FromResult(authorToDelete);
         }
     }

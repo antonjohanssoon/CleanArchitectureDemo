@@ -12,35 +12,44 @@ namespace Application.Commands.Books.UpdateBook
         {
             this.fakeDatabase = fakeDatabase;
         }
-
         public Task<Book> Handle(UpdateBookByIdCommand request, CancellationToken cancellationToken)
         {
-            Book bookToUpdate = fakeDatabase.Books.FirstOrDefault(book => book.Id == request.Id);
+            var bookToUpdate = GetBookById(request.Id);
+            ValidateUpdatedBook(request.UpdatedBook);
 
-            if (bookToUpdate == null)
-            {
-                throw new Exception($"Book with ID: {request.Id} not found.");
-            }
-
-            if (string.IsNullOrWhiteSpace(request.UpdatedBook.Title))
-            {
-                throw new Exception("Author name cannot be empty.");
-            }
-
-            if (string.IsNullOrWhiteSpace(request.UpdatedBook.Description))
-            {
-                throw new Exception("Book category cannot be empty.");
-            }
-
-            bookToUpdate.Title = request.UpdatedBook.Title;
-            bookToUpdate.Description = request.UpdatedBook.Description;
-
-            if (bookToUpdate.Title != request.UpdatedBook.Title || bookToUpdate.Description != request.UpdatedBook.Description)
-            {
-                throw new Exception("Failed to update book data.");
-            }
+            UpdateBookDetails(bookToUpdate, request.UpdatedBook);
 
             return Task.FromResult(bookToUpdate);
         }
+
+        private Book GetBookById(int id)
+        {
+            var book = fakeDatabase.Books.FirstOrDefault(b => b.Id == id);
+            if (book == null)
+            {
+                throw new Exception($"Book with ID: {id} not found.");
+            }
+            return book;
+        }
+
+        private void ValidateUpdatedBook(Book updatedBook)
+        {
+            if (string.IsNullOrWhiteSpace(updatedBook.Title))
+            {
+                throw new Exception("Book title cannot be empty.");
+            }
+
+            if (string.IsNullOrWhiteSpace(updatedBook.Description))
+            {
+                throw new Exception("Book description cannot be empty.");
+            }
+        }
+
+        private void UpdateBookDetails(Book existingBook, Book updatedBook)
+        {
+            existingBook.Title = updatedBook.Title;
+            existingBook.Description = updatedBook.Description;
+        }
+
     }
 }
