@@ -7,6 +7,8 @@ namespace Infrastructure.Database
         public List<Book> Books { get { return allBooksInDB; } set { allBooksInDB = value; } }
         public List<Author> Authors { get { return allAuthorsInDB; } set { allAuthorsInDB = value; } }
 
+        public List<User> Users { get { return allUsersInDB; } set { allUsersInDB = value; } }
+
 
         private List<Book> allBooksInDB = new List<Book>
         {
@@ -21,5 +23,14 @@ namespace Infrastructure.Database
             new Author(2, "J.K. Rowling", "Magic"),
             new Author(3, "Camilla Läckberg", "Detective")
         };
+
+        private List<User> allUsersInDB = new List<User>
+        {
+            new User(new Guid(), "AntonJohansson", "Hej123"),
+            new User(new Guid(), "RandomUser", "Hola123"),
+            new User(new Guid(), "NewUser00", "Hallå123")
+
+        };
+
     }
 }

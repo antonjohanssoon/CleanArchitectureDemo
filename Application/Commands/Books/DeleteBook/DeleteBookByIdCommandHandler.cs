@@ -23,11 +23,6 @@ namespace Application.Commands.Books.DeleteBook
             }
 
             fakeDatabase.Books.Remove(bookToDelete);
-
-            if (fakeDatabase.Books.Contains(bookToDelete))
-            {
-                throw new Exception($"Failed to delete book with ID: {request.Id}.");
-            }
             return Task.FromResult(bookToDelete);
         }
     }
