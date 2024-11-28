@@ -5,10 +5,10 @@ namespace Application.Queries.Authors.GetAuthor.GetById
 {
     public class GetAuthorByIdQuery : IRequest<Author>
     {
-        public GetAuthorByIdQuery(int id)
+        public GetAuthorByIdQuery(Guid id)
         {
             Id = id;
         }
-        public int Id { get; set; }
+        public Guid Id { get; set; }
     }
 }

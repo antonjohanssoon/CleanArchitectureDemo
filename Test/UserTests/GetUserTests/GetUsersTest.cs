@@ -28,8 +28,8 @@
             {
                 // Arrange
                 fakeDatabase.Users.Clear();
-                var user1 = new User(Guid.NewGuid(), "user1", "password123");
-                var user2 = new User(Guid.NewGuid(), "user2", "password456");
+                var user1 = new User("user1", "password123");
+                var user2 = new User("user2", "password456");
                 fakeDatabase.Users.Add(user1);
                 fakeDatabase.Users.Add(user2);
 

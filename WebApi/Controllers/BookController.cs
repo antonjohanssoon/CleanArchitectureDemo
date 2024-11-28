@@ -1,9 +1,9 @@
 ﻿using Application.Commands.Books.AddBook;
 using Application.Commands.Books.DeleteBook;
 using Application.Commands.Books.UpdateBook;
+using Application.Dtos;
 using Application.Queries.Books.GetBook.GetAll;
 using Application.Queries.Books.GetBook.GetById;
-using Domain;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -33,7 +33,7 @@ namespace WebApi.Controllers
         // GET api/<BookController>/5
         [HttpGet]
         [Route("getBookById/{bookId}")]
-        public async Task<IActionResult> GetBookById(int bookId)
+        public async Task<IActionResult> GetBookById(Guid bookId)
         {
             return Ok(await mediator.Send(new GetBookByIdQuery(bookId)));
         }
@@ -41,7 +41,7 @@ namespace WebApi.Controllers
         // POST api/<BookController>
         [HttpPost]
         [Route("addNewBook")]
-        public async Task<IActionResult> AddNewBook([FromBody] Book newBook)
+        public async Task<IActionResult> AddNewBook([FromBody] BookDto newBook)
         {
             return Ok(await mediator.Send(new AddBookCommand(newBook)));
         }
@@ -49,7 +49,7 @@ namespace WebApi.Controllers
         // PUT api/<BookController>/5
         [HttpPut]
         [Route("updateBook/{updatedBookId}")]
-        public async Task<IActionResult> UpdateBook(int updatedBookId, [FromBody] Book updatedBook)
+        public async Task<IActionResult> UpdateBook(Guid updatedBookId, [FromBody] BookDto updatedBook)
         {
             return Ok(await mediator.Send(new UpdateBookByIdCommand(updatedBookId, updatedBook)));
         }
@@ -57,7 +57,7 @@ namespace WebApi.Controllers
         // DELETE api/<BookController>/5
         [HttpDelete]
         [Route("deleteBookById/{bookId}")]
-        public async Task<IActionResult> DeleteBookById(int bookId)
+        public async Task<IActionResult> DeleteBookById(Guid bookId)
         {
             return Ok(await mediator.Send(new DeleteBookByIdCommand(bookId)));
         }

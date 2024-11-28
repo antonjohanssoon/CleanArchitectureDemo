@@ -6,9 +6,9 @@
         public string Username { get; set; } = string.Empty;
         public string Password { get; set; } = string.Empty;
 
-        public User(Guid id, string username, string password)
+        public User(string username, string password)
         {
-            Id = id;
+            Id = Guid.NewGuid();
             Username = username;
             Password = password;
         }

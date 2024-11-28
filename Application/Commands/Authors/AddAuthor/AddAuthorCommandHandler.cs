@@ -1,4 +1,5 @@
-﻿using Domain;
+﻿using Application.Dtos;
+using Domain;
 using Infrastructure.Database;
 using MediatR;
 
@@ -18,17 +19,14 @@ namespace Application.Commands.Authors.AddAuthor
             ValidateAuthor(request.NewAuthor);
             CheckForDuplicateAuthor(request.NewAuthor);
 
-            fakeDatabase.Authors.Add(request.NewAuthor);
+            var newAuthor = new Author(request.NewAuthor.Name, request.NewAuthor.BookCategory);
+            fakeDatabase.Authors.Add(newAuthor);
 
-            return Task.FromResult(request.NewAuthor);
+            return Task.FromResult(newAuthor);
         }
 
-        private void ValidateAuthor(Author author)
+        private void ValidateAuthor(AuthorDto author)
         {
-            if (author.Id <= 0)
-            {
-                throw new Exception("Author ID must be greater than 0 and cannot be null.");
-            }
 
             if (string.IsNullOrWhiteSpace(author.Name))
             {
@@ -41,16 +39,11 @@ namespace Application.Commands.Authors.AddAuthor
             }
         }
 
-        private void CheckForDuplicateAuthor(Author author)
+        private void CheckForDuplicateAuthor(AuthorDto author)
         {
             if (fakeDatabase.Authors.Any(existingAuthor => existingAuthor.Name.Equals(author.Name, StringComparison.OrdinalIgnoreCase)))
             {
                 throw new Exception($"Author with name '{author.Name}' already exists.");
-            }
-
-            if (fakeDatabase.Authors.Any(existingAuthor => existingAuthor.Id == author.Id))
-            {
-                throw new Exception($"Author with ID '{author.Id}' already exists.");
             }
         }
     }

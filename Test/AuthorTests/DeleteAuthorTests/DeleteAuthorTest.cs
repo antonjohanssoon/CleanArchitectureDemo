@@ -21,9 +21,9 @@ namespace Test.AuthorTests.DeleteAuthorTests
         public async Task Handle_ShouldDeleteAuthor_WhenAuthorExists()
         {
             // Arrange
-            var authorToDelete = new Author(9, "Anton Johansson", "Sport");
+            var authorToDelete = new Author("Anton Johansson", "Sport");
             fakeDatabase.Authors.Add(authorToDelete);
-            var command = new DeleteAuthorByIdCommand(9);
+            var command = new DeleteAuthorByIdCommand(authorToDelete.Id);
 
             // Act
             var result = await handler.Handle(command, CancellationToken.None);
@@ -37,13 +37,14 @@ namespace Test.AuthorTests.DeleteAuthorTests
         public void Handle_ShouldThrowException_WhenAuthorNotFound()
         {
             // Arrange
-            var command = new DeleteAuthorByIdCommand(999);
+            var nonExistentAuthorId = Guid.NewGuid();
+            var command = new DeleteAuthorByIdCommand(nonExistentAuthorId);
 
             // Act
             var exception = Assert.ThrowsAsync<Exception>(() => handler.Handle(command, CancellationToken.None));
 
-            //Assert
-            Assert.AreEqual("Author with ID: 999 not found.", exception.Message);
+            // Assert
+            Assert.AreEqual($"Author with ID: {nonExistentAuthorId} not found.", exception.Message);
         }
     }
 

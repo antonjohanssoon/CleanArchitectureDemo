@@ -1,4 +1,5 @@
 ﻿using Application.Commands.Users.AddUser;
+using Application.Dtos;
 using Application.Queries.Users.GetAllUsers;
 using Application.Queries.Users.Login;
 using Domain;
@@ -29,7 +30,7 @@ namespace WebApi.Controllers
 
         [HttpPost]
         [Route("addNewUser")]
-        public async Task<IActionResult> RegisterNewUser([FromBody] User newUser)
+        public async Task<IActionResult> RegisterNewUser([FromBody] UserDto newUser)
         {
             return Ok(await mediator.Send(new AddUserCommand(newUser)));
         }

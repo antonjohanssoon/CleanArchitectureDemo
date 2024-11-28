@@ -1,4 +1,5 @@
-﻿using Domain;
+﻿using Application.Dtos;
+using Domain;
 using MediatR;
 
 namespace Application.Commands.Authors.AddAuthor
@@ -6,11 +7,11 @@ namespace Application.Commands.Authors.AddAuthor
     public class AddAuthorCommand : IRequest<Author>
     {
 
-        public AddAuthorCommand(Author newAuthor)
+        public AddAuthorCommand(AuthorDto newAuthor)
         {
             NewAuthor = newAuthor;
         }
 
-        public Author NewAuthor { get; set; }
+        public AuthorDto NewAuthor { get; set; }
     }
 }

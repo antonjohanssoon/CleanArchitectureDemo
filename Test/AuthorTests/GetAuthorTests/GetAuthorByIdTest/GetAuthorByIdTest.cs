@@ -21,30 +21,34 @@ namespace Test.AuthorTests.GetAuthorTests.GetAuthorByIdTest
         public async Task Handle_ShouldReturnAuthor_WhenAuthorExists()
         {
             // Arrange
-            var author = new Author(4, "Anton Johansson", "Sport");
+            var author = new Author("Anton Johansson", "Sport");
             fakeDatabase.Authors.Add(author);
 
-            var query = new GetAuthorByIdQuery(4);
+            var query = new GetAuthorByIdQuery(author.Id);
 
             // Act
             var result = await handler.Handle(query, CancellationToken.None);
 
             // Assert
-            Assert.AreEqual(author, result);
+            Assert.AreEqual(author.Id, result.Id);
+            Assert.AreEqual(author.Name, result.Name);
+            Assert.AreEqual(author.BookCategory, result.BookCategory);
         }
 
         [Test]
         public void Handle_ShouldThrowException_WhenAuthorWithIdDoesNotExist()
         {
             // Arrange
-            var query = new GetAuthorByIdQuery(99);
+            var nonExistentAuthorId = Guid.NewGuid();
+            var query = new GetAuthorByIdQuery(nonExistentAuthorId);
 
             // Act
             var exception = Assert.ThrowsAsync<KeyNotFoundException>(() => handler.Handle(query, CancellationToken.None));
 
             // Assert
-            Assert.AreEqual("Author with ID: 99 was not found.", exception.Message);
+            Assert.AreEqual($"Author with ID: {nonExistentAuthorId} was not found.", exception.Message);
         }
     }
+
 
 }

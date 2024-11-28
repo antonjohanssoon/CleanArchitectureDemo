@@ -1,4 +1,5 @@
-﻿using Domain;
+﻿using Application.Dtos;
+using Domain;
 using Infrastructure.Database;
 using MediatR;
 
@@ -22,9 +23,9 @@ namespace Application.Commands.Authors.UpdateAuthor
             return Task.FromResult(authorToUpdate);
         }
 
-        private Author GetAuthorById(int id)
+        private Author GetAuthorById(Guid id)
         {
-            var author = fakeDatabase.Authors.FirstOrDefault(a => a.Id == id);
+            var author = fakeDatabase.Authors.FirstOrDefault(author => author.Id == id);
             if (author == null)
             {
                 throw new Exception($"Author with ID: {id} not found.");
@@ -32,7 +33,7 @@ namespace Application.Commands.Authors.UpdateAuthor
             return author;
         }
 
-        private void ValidateUpdatedAuthor(Author updatedAuthor)
+        private void ValidateUpdatedAuthor(AuthorDto updatedAuthor)
         {
             if (string.IsNullOrWhiteSpace(updatedAuthor.Name))
             {
@@ -45,7 +46,7 @@ namespace Application.Commands.Authors.UpdateAuthor
             }
         }
 
-        private void UpdateAuthorDetails(Author existingAuthor, Author updatedAuthor)
+        private void UpdateAuthorDetails(Author existingAuthor, AuthorDto updatedAuthor)
         {
             existingAuthor.Name = updatedAuthor.Name;
             existingAuthor.BookCategory = updatedAuthor.BookCategory;

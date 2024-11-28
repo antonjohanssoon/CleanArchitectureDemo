@@ -2,11 +2,18 @@
 {
     public class Author
     {
-        public int Id { get; set; }
+        public Guid Id { get; set; }
         public string Name { get; set; }
         public string BookCategory { get; set; }
 
-        public Author(int id, string name, string bookCategory)
+        public Author(string name, string bookCategory)
+        {
+            Id = Guid.NewGuid();
+            Name = name;
+            BookCategory = bookCategory;
+        }
+
+        public Author(Guid id, string name, string bookCategory)
         {
             Id = id;
             Name = name;

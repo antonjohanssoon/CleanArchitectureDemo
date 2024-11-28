@@ -1,4 +1,5 @@
 ﻿using Application.Commands.Books.AddBook;
+using Application.Dtos;
 using Domain;
 using Infrastructure.Database;
 
@@ -21,90 +22,99 @@ namespace Test.BookTests.AddBookTests
         public async Task Handle_ShouldAddBook_WhenBookIsValid()
         {
             // Arrange
-            var newBook = new Book(5, "Book Title", "Fiction");
-            var command = new AddBookCommand(newBook);
+            var newBookDto = new BookDto
+            {
+                Title = "Book Title",
+                Description = "Fiction"
+            };
+            var command = new AddBookCommand(newBookDto);
 
             // Act
             var result = await handler.Handle(command, CancellationToken.None);
 
             // Assert
-            Assert.AreEqual(newBook, result);
-        }
-
-        [Test]
-        public void Handle_ShouldThrowException_WhenBookIdIsInvalid()
-        {
-            // Arrange
-            var invalidBook = new Book(0, "Book Title", "Fiction");
-            var command = new AddBookCommand(invalidBook);
-
-            // Act
-            var exception = Assert.ThrowsAsync<Exception>(() => handler.Handle(command, CancellationToken.None));
-
-            //Assert
-            Assert.AreEqual("Book ID must be greater than 0 and cannot be null.", exception.Message);
-        }
-
-        [Test]
-        public void Handle_ShouldThrowException_WhenBookWithSameTitleExists()
-        {
-            // Arrange
-            var existingBook = new Book(1, "Existing Book", "Fiction");
-            var newBook = new Book(1, "Existing Book", "Non-Fiction");
-            var command = new AddBookCommand(newBook);
-
-            fakeDatabase.Books.Add(existingBook);
-
-            // Act 
-            var exception = Assert.ThrowsAsync<Exception>(() => handler.Handle(command, CancellationToken.None));
-
-            //Assert
-            Assert.AreEqual($"Book with ID '{newBook.Id}' already exists.", exception.Message);
-        }
-
-        [Test]
-        public void Handle_ShouldThrowException_WhenBookWithSameIdExists()
-        {
-            // Arrange
-            var existingBook = new Book(1, "Existing Book", "Fiction");
-            var newBook = new Book(1, "New Book", "Non-Fiction");
-            var command = new AddBookCommand(newBook);
-            fakeDatabase.Books.Add(existingBook);
-
-            // Act
-            var exception = Assert.ThrowsAsync<Exception>(() => handler.Handle(command, CancellationToken.None));
-
-            //Assert
-            Assert.AreEqual($"Book with ID '{newBook.Id}' already exists.", exception.Message);
+            Assert.AreEqual(newBookDto.Title, result.Title);
+            Assert.AreEqual(newBookDto.Description, result.Description);
         }
 
         [Test]
         public void Handle_ShouldThrowException_WhenBookTitleIsEmptyOrWhitespace()
         {
             // Arrange
-            var invalidBook1 = new Book(5, "", "Fiction");
-            var command1 = new AddBookCommand(invalidBook1);
+            var invalidBookDto = new BookDto
+            {
+                Title = "",
+                Description = "Fiction"
+            };
+            var command = new AddBookCommand(invalidBookDto);
 
-            //Act
-            var exception1 = Assert.ThrowsAsync<Exception>(() => handler.Handle(command1, CancellationToken.None));
+            // Act
+            var exception = Assert.ThrowsAsync<Exception>(() => handler.Handle(command, CancellationToken.None));
 
-            //Assert
-            Assert.AreEqual("Book title is required and cannot be empty.", exception1.Message);
+            // Assert
+            Assert.AreEqual("Book title is required and cannot be empty.", exception.Message);
         }
 
         [Test]
-        public void Handle_ShouldThrowException_WhenBookCategoryIsEmptyOrWhitespace()
+        public void Handle_ShouldThrowException_WhenBookDescriptionIsEmptyOrWhitespace()
         {
             // Arrange
-            var invalidBook1 = new Book(5, "Book Title", "");
-            var command1 = new AddBookCommand(invalidBook1);
+            var invalidBookDto = new BookDto
+            {
+                Title = "Book Title",
+                Description = ""
+            };
+            var command = new AddBookCommand(invalidBookDto);
 
-            //Act
-            var exception1 = Assert.ThrowsAsync<Exception>(() => handler.Handle(command1, CancellationToken.None));
+            // Act
+            var exception = Assert.ThrowsAsync<Exception>(() => handler.Handle(command, CancellationToken.None));
 
-            //Assert
-            Assert.AreEqual("Book description is required and cannot be empty.", exception1.Message);
+            // Assert
+            Assert.AreEqual("Book description is required and cannot be empty.", exception.Message);
+        }
+
+        [Test]
+        public void Handle_ShouldThrowException_WhenBookWithSameTitleExists()
+        {
+            // Arrange
+            var existingBook = new Book("Existing Book", "Fiction");
+            var newBookDto = new BookDto
+            {
+                Title = "Existing Book",
+                Description = "Non-Fiction"
+            };
+            var command = new AddBookCommand(newBookDto);
+
+            fakeDatabase.Books.Add(existingBook);
+
+            // Act 
+            var exception = Assert.ThrowsAsync<Exception>(() => handler.Handle(command, CancellationToken.None));
+
+            // Assert
+            Assert.AreEqual($"Book with title '{newBookDto.Title}' already exists.", exception.Message);
+        }
+
+        [Test]
+        public void Handle_ShouldThrowException_WhenBookWithSameDescriptionExists()
+        {
+            // Arrange
+            var existingBook = new Book("Existing Book", "Fiction");
+            var newBookDto = new BookDto
+            {
+                Title = "New Book",
+                Description = "Fiction"
+            };
+            var command = new AddBookCommand(newBookDto);
+            fakeDatabase.Books.Add(existingBook);
+
+            // Act
+            var exception = Assert.ThrowsAsync<Exception>(() => handler.Handle(command, CancellationToken.None));
+
+            // Assert
+            Assert.AreEqual($"Book with description '{newBookDto.Description}' already exists.", exception.Message);
         }
     }
+
+
 
 }

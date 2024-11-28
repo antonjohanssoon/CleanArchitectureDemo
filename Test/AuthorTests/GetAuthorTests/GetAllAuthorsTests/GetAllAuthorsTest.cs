@@ -21,7 +21,7 @@ namespace Test.AuthorTests.GetAuthorTests.GetAllAuthorsTests
         public async Task Handle_ShouldReturnAuthors_WhenAuthorsExist()
         {
             // Arrange
-            var newauthor = new Author(4, "Anton Johansson", "Sport");
+            var newauthor = new Author("Anton Johansson", "Sport");
             fakeDatabase.Authors.Add(newauthor);
 
             var query = new GetAllAuthorsFromDBQuery();

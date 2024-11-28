@@ -12,23 +12,23 @@ namespace Infrastructure.Database
 
         private List<Book> allBooksInDB = new List<Book>
         {
-            new Book(2, "Lord of the Rings", "A ring to destroy"),
-            new Book(3, "The Bible", "Religious book"),
-            new Book(4, "The Hobbit", "Adventure to the lonely mountain")
+            new Book("Lord of the Rings", "A ring to destroy"),
+            new Book("The Bible", "Religious book"),
+            new Book("The Hobbit", "Adventure to the lonely mountain")
         };
 
         private List<Author> allAuthorsInDB = new List<Author>
         {
-            new Author(1, "J.R.R. Tolkien", "Adventure"),
-            new Author(2, "J.K. Rowling", "Magic"),
-            new Author(3, "Camilla Läckberg", "Detective")
+            new Author("J.R.R. Tolkien", "Adventure"),
+            new Author("J.K. Rowling", "Magic"),
+            new Author("Camilla Läckberg", "Detective")
         };
 
         private List<User> allUsersInDB = new List<User>
         {
-            new User(new Guid(), "AntonJohansson", "Hej123"),
-            new User(new Guid(), "RandomUser", "Hola123"),
-            new User(new Guid(), "NewUser00", "Hallå123")
+            new User("AntonJohansson", "Hej123"),
+            new User("RandomUser", "Hola123"),
+            new User("NewUser00", "Hallå123")
 
         };
 

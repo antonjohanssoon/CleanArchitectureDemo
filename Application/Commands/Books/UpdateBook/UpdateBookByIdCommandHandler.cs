@@ -1,4 +1,5 @@
-﻿using Domain;
+﻿using Application.Dtos;
+using Domain;
 using Infrastructure.Database;
 using MediatR;
 
@@ -22,9 +23,9 @@ namespace Application.Commands.Books.UpdateBook
             return Task.FromResult(bookToUpdate);
         }
 
-        private Book GetBookById(int id)
+        private Book GetBookById(Guid id)
         {
-            var book = fakeDatabase.Books.FirstOrDefault(b => b.Id == id);
+            var book = fakeDatabase.Books.FirstOrDefault(book => book.Id == id);
             if (book == null)
             {
                 throw new Exception($"Book with ID: {id} not found.");
@@ -32,7 +33,7 @@ namespace Application.Commands.Books.UpdateBook
             return book;
         }
 
-        private void ValidateUpdatedBook(Book updatedBook)
+        private void ValidateUpdatedBook(BookDto updatedBook)
         {
             if (string.IsNullOrWhiteSpace(updatedBook.Title))
             {
@@ -45,7 +46,7 @@ namespace Application.Commands.Books.UpdateBook
             }
         }
 
-        private void UpdateBookDetails(Book existingBook, Book updatedBook)
+        private void UpdateBookDetails(Book existingBook, BookDto updatedBook)
         {
             existingBook.Title = updatedBook.Title;
             existingBook.Description = updatedBook.Description;
