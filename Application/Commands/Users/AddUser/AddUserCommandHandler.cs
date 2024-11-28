@@ -1,4 +1,5 @@
-﻿using Domain;
+﻿using Application.Dtos;
+using Domain;
 using Infrastructure.Database;
 using MediatR;
 
@@ -18,12 +19,13 @@ namespace Application.Commands.Users.AddUser
             ValidateUser(request.NewUser);
             CheckForDuplicateUser(request.NewUser);
 
-            fakeDatabase.Users.Add(request.NewUser);
+            var newUser = new User(request.NewUser.Username, request.NewUser.Password);
+            fakeDatabase.Users.Add(newUser);
 
-            return Task.FromResult(request.NewUser);
+            return Task.FromResult(newUser);
         }
 
-        private void ValidateUser(User user)
+        private void ValidateUser(UserDto user)
         {
 
             if (string.IsNullOrWhiteSpace(user.Username))
@@ -37,16 +39,11 @@ namespace Application.Commands.Users.AddUser
             }
         }
 
-        private void CheckForDuplicateUser(User user)
+        private void CheckForDuplicateUser(UserDto user)
         {
             if (fakeDatabase.Users.Any(existingUser => existingUser.Username.Equals(user.Username, StringComparison.OrdinalIgnoreCase)))
             {
                 throw new Exception($"User with username '{user.Username}' already exists.");
-            }
-
-            if (fakeDatabase.Users.Any(existingUser => existingUser.Id == user.Id))
-            {
-                throw new Exception($"User with ID '{user.Id}' already exists.");
             }
         }
     }

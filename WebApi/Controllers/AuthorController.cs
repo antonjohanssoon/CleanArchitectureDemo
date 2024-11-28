@@ -1,9 +1,9 @@
 ﻿using Application.Commands.Authors.AddAuthor;
 using Application.Commands.Authors.DeleteAuthor;
 using Application.Commands.Authors.UpdateAuthor;
+using Application.Dtos;
 using Application.Queries.Authors.GetAuthor.GetAll;
 using Application.Queries.Authors.GetAuthor.GetById;
-using Domain;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -35,7 +35,7 @@ namespace WebApi.Controllers
         // GET api/<AuthorController>/5
         [HttpGet]
         [Route("getAuthorById/{authorId}")]
-        public async Task<IActionResult> GetAuthorById(int authorId)
+        public async Task<IActionResult> GetAuthorById(Guid authorId)
         {
             return Ok(await mediator.Send(new GetAuthorByIdQuery(authorId)));
         }
@@ -43,7 +43,7 @@ namespace WebApi.Controllers
         // POST api/<AuthorController>
         [HttpPost]
         [Route("addNewAuthor")]
-        public async Task<IActionResult> AddNewAuthor([FromBody] Author newAuthor)
+        public async Task<IActionResult> AddNewAuthor([FromBody] AuthorDto newAuthor)
         {
             return Ok(await mediator.Send(new AddAuthorCommand(newAuthor)));
         }
@@ -51,7 +51,7 @@ namespace WebApi.Controllers
         // PUT api/<AuthorController>/5
         [HttpPut]
         [Route("updateAuthor/{updatedAuthorId}")]
-        public async Task<IActionResult> UpdateAuthor(int updatedAuthorId, [FromBody] Author updatedAuthor)
+        public async Task<IActionResult> UpdateAuthor(Guid updatedAuthorId, [FromBody] AuthorDto updatedAuthor)
         {
             return Ok(await mediator.Send(new UpdateAuthorByIdCommand(updatedAuthorId, updatedAuthor)));
         }
@@ -59,7 +59,7 @@ namespace WebApi.Controllers
         // DELETE api/<AuthorController>/5
         [HttpDelete]
         [Route("deleteAuthorById/{authorId}")]
-        public async Task<IActionResult> DeleteAuthorById(int authorId)
+        public async Task<IActionResult> DeleteAuthorById(Guid authorId)
         {
             return Ok(await mediator.Send(new DeleteAuthorByIdCommand(authorId)));
         }

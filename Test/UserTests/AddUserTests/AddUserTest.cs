@@ -1,6 +1,7 @@
 ﻿namespace Test.UserTests
 {
     using Application.Commands.Users.AddUser;
+    using Application.Dtos;
     using Domain;
     using Infrastructure.Database;
     using NUnit.Framework;
@@ -27,27 +28,34 @@
             {
                 // Arrange
                 fakeDatabase.Users.Clear();
-                var newUser = new User(Guid.NewGuid(), "newUser", "password123");
-                var command = new AddUserCommand(newUser);
+                var newUserDto = new UserDto
+                {
+                    Username = "newUser",
+                    Password = "password123"
+                };
+                var command = new AddUserCommand(newUserDto);
 
                 // Act
                 var result = await handler.Handle(command, CancellationToken.None);
 
                 // Assert
                 Assert.IsNotNull(result);
-                Assert.AreEqual(newUser.Username, result.Username);
-                Assert.AreEqual(newUser.Password, result.Password);
+                Assert.AreEqual(newUserDto.Username, result.Username);
+                Assert.AreEqual(newUserDto.Password, result.Password);
                 Assert.AreEqual(1, fakeDatabase.Users.Count);
                 Assert.Contains(result, fakeDatabase.Users);
             }
-
 
             [Test]
             public void Handle_ShouldThrowException_WhenUsernameIsEmpty()
             {
                 // Arrange
-                var newUser = new User(Guid.NewGuid(), "", "password123");
-                var command = new AddUserCommand(newUser);
+                var newUserDto = new UserDto
+                {
+                    Username = "",
+                    Password = "password123"
+                };
+                var command = new AddUserCommand(newUserDto);
 
                 // Act
                 var exception = Assert.ThrowsAsync<Exception>(() => handler.Handle(command, CancellationToken.None));
@@ -56,13 +64,16 @@
                 Assert.AreEqual("Username is required and cannot be empty.", exception.Message);
             }
 
-
             [Test]
             public void Handle_ShouldThrowException_WhenPasswordIsEmpty()
             {
                 // Arrange
-                var newUser = new User(Guid.NewGuid(), "newUser", "");
-                var command = new AddUserCommand(newUser);
+                var newUserDto = new UserDto
+                {
+                    Username = "newUser",
+                    Password = ""
+                };
+                var command = new AddUserCommand(newUserDto);
 
                 // Act
                 var exception = Assert.ThrowsAsync<Exception>(() => handler.Handle(command, CancellationToken.None));
@@ -71,16 +82,19 @@
                 Assert.AreEqual("Password is required and cannot be empty.", exception.Message);
             }
 
-
             [Test]
             public void Handle_ShouldThrowException_WhenUsernameAlreadyExists()
             {
                 // Arrange
-                var existingUser = new User(Guid.NewGuid(), "existingUser", "password123");
+                var existingUser = new User("existingUser", "password123");
                 fakeDatabase.Users.Add(existingUser);
 
-                var newUser = new User(Guid.NewGuid(), "existingUser", "password456");
-                var command = new AddUserCommand(newUser);
+                var newUserDto = new UserDto
+                {
+                    Username = "existingUser",
+                    Password = "password456"
+                };
+                var command = new AddUserCommand(newUserDto);
 
                 // Act
                 var exception = Assert.ThrowsAsync<Exception>(() => handler.Handle(command, CancellationToken.None));
@@ -88,25 +102,8 @@
                 // Assert
                 Assert.AreEqual($"User with username '{existingUser.Username}' already exists.", exception.Message);
             }
-
-
-            [Test]
-            public void Handle_ShouldThrowException_WhenUserIdAlreadyExists()
-            {
-                // Arrange
-                var existingUser = new User(Guid.NewGuid(), "existingUser", "password123");
-                fakeDatabase.Users.Add(existingUser);
-
-                var newUser = new User(existingUser.Id, "newUser", "password456");
-                var command = new AddUserCommand(newUser);
-
-                // Act
-                var exception = Assert.ThrowsAsync<Exception>(() => handler.Handle(command, CancellationToken.None));
-
-                //Assert
-                Assert.AreEqual($"User with ID '{existingUser.Id}' already exists.", exception.Message);
-            }
         }
+
     }
 
 }

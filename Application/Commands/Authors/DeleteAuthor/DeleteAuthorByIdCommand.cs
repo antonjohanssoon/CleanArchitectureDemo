@@ -5,10 +5,10 @@ namespace Application.Commands.Authors.DeleteAuthor
 {
     public class DeleteAuthorByIdCommand : IRequest<Author>
     {
-        public DeleteAuthorByIdCommand(int id)
+        public DeleteAuthorByIdCommand(Guid id)
         {
             Id = id;
         }
-        public int Id { get; set; }
+        public Guid Id { get; set; }
     }
 }

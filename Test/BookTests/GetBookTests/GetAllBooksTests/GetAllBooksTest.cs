@@ -21,7 +21,7 @@ namespace Test.BookTests.GetBookTests.GetAllBooksTests
         public async Task Handle_ShouldReturnBooks_WhenBooksExist()
         {
             // Arrange
-            var newBook = new Book(4, "The Great Adventure", "Fiction");
+            var newBook = new Book("The Great Adventure", "Fiction");
             fakeDatabase.Books.Add(newBook);
 
             var query = new GetAllBooksFromDBQuery();

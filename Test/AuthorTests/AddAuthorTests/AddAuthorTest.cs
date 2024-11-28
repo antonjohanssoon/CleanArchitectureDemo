@@ -1,4 +1,5 @@
 ﻿using Application.Commands.Authors.AddAuthor;
+using Application.Dtos;
 using Domain;
 using Infrastructure.Database;
 
@@ -21,89 +22,78 @@ namespace Test.AuthorTests.AddAuthorTests
         public async Task Handle_ShouldAddAuthor_WhenAuthorIsValid()
         {
             // Arrange
-            var newAuthor = new Author(5, "Author Name", "Fiction");
-            var command = new AddAuthorCommand(newAuthor);
+            var newAuthorDto = new AuthorDto
+            {
+                Name = "Author Name",
+                BookCategory = "Fiction"
+            };
+            var command = new AddAuthorCommand(newAuthorDto);
 
             // Act
             var result = await handler.Handle(command, CancellationToken.None);
 
             // Assert
-            Assert.AreEqual(newAuthor, result);
-        }
-
-        [Test]
-        public void Handle_ShouldThrowException_WhenAuthorIdIsInvalid()
-        {
-            // Arrange
-            var invalidAuthor = new Author(0, "Author Name", "Fiction");
-            var command = new AddAuthorCommand(invalidAuthor);
-
-            // Act
-            var exception = Assert.ThrowsAsync<Exception>(() => handler.Handle(command, CancellationToken.None));
-
-            //Assert
-            Assert.AreEqual("Author ID must be greater than 0 and cannot be null.", exception.Message);
-        }
-
-        [Test]
-        public void Handle_ShouldThrowException_WhenAuthorWithSameNameExists()
-        {
-            // Arrange
-            var existingAuthor = new Author(1, "Existing Author", "Fiction");
-            var newAuthor = new Author(1, "Existing Author", "Non-Fiction");
-            var command = new AddAuthorCommand(newAuthor);
-
-            fakeDatabase.Authors.Add(existingAuthor);
-
-            // Act 
-            var exception = Assert.ThrowsAsync<Exception>(() => handler.Handle(command, CancellationToken.None));
-
-            //Assert
-            Assert.AreEqual($"Author with name '{newAuthor.Name}' already exists.", exception.Message);
-        }
-
-        [Test]
-        public void Handle_ShouldThrowException_WhenAuthorWithSameIdExists()
-        {
-            // Arrange
-            var existingAuthor = new Author(1, "Existing Author", "Fiction");
-            var newAuthor = new Author(1, "New Author", "Non-Fiction");
-            var command = new AddAuthorCommand(newAuthor);
-            fakeDatabase.Authors.Add(existingAuthor);
-
-            // Act
-            var exception = Assert.ThrowsAsync<Exception>(() => handler.Handle(command, CancellationToken.None));
-
-            //Assert
-            Assert.AreEqual($"Author with ID '{newAuthor.Id}' already exists.", exception.Message);
+            Assert.AreEqual(newAuthorDto.Name, result.Name);
+            Assert.AreEqual(newAuthorDto.BookCategory, result.BookCategory);
         }
 
         [Test]
         public void Handle_ShouldThrowException_WhenAuthorNameIsEmptyOrWhitespace()
         {
             // Arrange
-            var invalidAuthor1 = new Author(5, "", "Fiction");
-            var command1 = new AddAuthorCommand(invalidAuthor1);
+            var invalidAuthorDto = new AuthorDto
+            {
+                Name = "",
+                BookCategory = "Fiction"
+            };
+            var command = new AddAuthorCommand(invalidAuthorDto);
 
-            //Act
-            var exception1 = Assert.ThrowsAsync<Exception>(() => handler.Handle(command1, CancellationToken.None));
+            // Act
+            var exception = Assert.ThrowsAsync<Exception>(() => handler.Handle(command, CancellationToken.None));
 
-            //Assert
-            Assert.AreEqual("Author name is required and cannot be empty.", exception1.Message);
+            // Assert
+            Assert.AreEqual("Author name is required and cannot be empty.", exception.Message);
         }
 
         [Test]
         public void Handle_ShouldThrowException_WhenAuthorBookCategoryIsEmptyOrWhitespace()
         {
             // Arrange
-            var invalidAuthor1 = new Author(5, "Author Name", "");
-            var command1 = new AddAuthorCommand(invalidAuthor1);
+            var invalidAuthorDto = new AuthorDto
+            {
+                Name = "Author Name",
+                BookCategory = ""
+            };
+            var command = new AddAuthorCommand(invalidAuthorDto);
 
-            //Act
-            var exception1 = Assert.ThrowsAsync<Exception>(() => handler.Handle(command1, CancellationToken.None));
+            // Act
+            var exception = Assert.ThrowsAsync<Exception>(() => handler.Handle(command, CancellationToken.None));
 
-            //Assert
-            Assert.AreEqual("Author book category is required and cannot be empty.", exception1.Message);
+            // Assert
+            Assert.AreEqual("Author book category is required and cannot be empty.", exception.Message);
         }
+
+        [Test]
+        public void Handle_ShouldThrowException_WhenAuthorWithSameNameExists()
+        {
+            // Arrange
+            var existingAuthor = new Author("Existing Author", "Fiction");
+            var newAuthorDto = new AuthorDto
+            {
+                Name = "Existing Author",
+                BookCategory = "Non-Fiction"
+            };
+            var command = new AddAuthorCommand(newAuthorDto);
+
+            fakeDatabase.Authors.Add(existingAuthor);
+
+            // Act 
+            var exception = Assert.ThrowsAsync<Exception>(() => handler.Handle(command, CancellationToken.None));
+
+            // Assert
+            Assert.AreEqual($"Author with name '{newAuthorDto.Name}' already exists.", exception.Message);
+        }
+
     }
+
 }

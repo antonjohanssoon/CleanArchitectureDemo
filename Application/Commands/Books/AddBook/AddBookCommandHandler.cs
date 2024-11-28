@@ -1,4 +1,5 @@
-﻿using Domain;
+﻿using Application.Dtos;
+using Domain;
 using Infrastructure.Database;
 using MediatR;
 
@@ -16,20 +17,15 @@ namespace Application.Commands.Books.AddBook
         public Task<Book> Handle(AddBookCommand request, CancellationToken cancellationToken)
         {
             ValidateBook(request.NewBook);
-            CheckForDuplicateBookId(request.NewBook);
 
-            fakeDatabase.Books.Add(request.NewBook);
+            var newBook = new Book(request.NewBook.Title, request.NewBook.Description);
+            fakeDatabase.Books.Add(newBook);
 
-            return Task.FromResult(request.NewBook);
+            return Task.FromResult(newBook);
         }
 
-        private void ValidateBook(Book book)
+        private void ValidateBook(BookDto book)
         {
-            if (book.Id <= 0)
-            {
-                throw new Exception("Book ID must be greater than 0 and cannot be null.");
-            }
-
             if (string.IsNullOrWhiteSpace(book.Title))
             {
                 throw new Exception("Book title is required and cannot be empty.");
@@ -39,14 +35,19 @@ namespace Application.Commands.Books.AddBook
             {
                 throw new Exception("Book description is required and cannot be empty.");
             }
-        }
 
-        private void CheckForDuplicateBookId(Book book)
-        {
-            if (fakeDatabase.Books.Any(existingBook => existingBook.Id == book.Id))
+            var existingBookWithSameTitle = fakeDatabase.Books.FirstOrDefault(b => b.Title == book.Title);
+            if (existingBookWithSameTitle != null)
             {
-                throw new Exception($"Book with ID '{book.Id}' already exists.");
+                throw new Exception($"Book with title '{book.Title}' already exists.");
+            }
+
+            var existingBookWithSameDescription = fakeDatabase.Books.FirstOrDefault(b => b.Description == book.Description);
+            if (existingBookWithSameDescription != null)
+            {
+                throw new Exception($"Book with description '{book.Description}' already exists.");
             }
         }
+
     }
 }

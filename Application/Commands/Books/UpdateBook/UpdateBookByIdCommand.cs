@@ -1,17 +1,18 @@
-﻿using Domain;
+﻿using Application.Dtos;
+using Domain;
 using MediatR;
 
 namespace Application.Commands.Books.UpdateBook
 {
     public class UpdateBookByIdCommand : IRequest<Book>
     {
-        public UpdateBookByIdCommand(int id, Book updatedBook)
+        public UpdateBookByIdCommand(Guid id, BookDto updatedBook)
         {
             Id = id;
             UpdatedBook = updatedBook;
         }
 
-        public int Id { get; }
-        public Book UpdatedBook { get; }
+        public Guid Id { get; }
+        public BookDto UpdatedBook { get; }
     }
 }
