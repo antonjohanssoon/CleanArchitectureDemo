@@ -1,28 +1,30 @@
-﻿using Application.Queries.Authors.GetAuthor.GetAll;
+﻿using Application.Interfaces.RepositoryInterfaces;
+using Application.Queries.Authors.GetAuthor.GetAll;
 using Domain;
-using Infrastructure.Database;
+using Moq;
 
 namespace Test.AuthorTests.GetAuthorTests.GetAllAuthorsTests
 {
     [TestFixture]
     public class GetAllAuthorsTest
     {
-        private FakeDatabase fakeDatabase;
+        private Mock<IRepository<Author>> authorRepositoryMock;
         private GetAllAuthorsFromDBQueryHandler handler;
 
         [SetUp]
         public void Setup()
         {
-            fakeDatabase = new FakeDatabase();
-            handler = new GetAllAuthorsFromDBQueryHandler(fakeDatabase);
+            authorRepositoryMock = new Mock<IRepository<Author>>();
+            handler = new GetAllAuthorsFromDBQueryHandler(authorRepositoryMock.Object);
         }
 
         [Test]
         public async Task Handle_ShouldReturnAuthors_WhenAuthorsExist()
         {
             // Arrange
-            var newauthor = new Author("Anton Johansson", "Sport");
-            fakeDatabase.Authors.Add(newauthor);
+            var newAuthor = new Author("Anton Johansson", "Sport");
+
+            authorRepositoryMock.Setup(repo => repo.GetAll()).Returns(new List<Author> { newAuthor });
 
             var query = new GetAllAuthorsFromDBQuery();
 
@@ -30,16 +32,17 @@ namespace Test.AuthorTests.GetAuthorTests.GetAllAuthorsTests
             var result = await handler.Handle(query, CancellationToken.None);
 
             // Assert
-            Assert.AreEqual(4, result.Count);
-            Assert.Contains(newauthor, result);
+            Assert.AreEqual(1, result.Count);
+            Assert.Contains(newAuthor, result);
         }
 
         [Test]
         public void Handle_ShouldThrowException_WhenAuthorsListIsEmpty()
         {
             // Arrange
-            fakeDatabase.Authors.Clear();
-            var query = new GetAllAuthorsFromDBQuery(); // Skapa queryn för att hämta alla författare
+            authorRepositoryMock.Setup(repo => repo.GetAll()).Returns(new List<Author>());
+
+            var query = new GetAllAuthorsFromDBQuery();
 
             // Act
             var exception = Assert.ThrowsAsync<Exception>(() => handler.Handle(query, CancellationToken.None));
@@ -49,3 +52,4 @@ namespace Test.AuthorTests.GetAuthorTests.GetAllAuthorsTests
         }
     }
 }
+

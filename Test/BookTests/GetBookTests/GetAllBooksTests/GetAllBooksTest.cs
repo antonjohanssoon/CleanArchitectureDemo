@@ -1,20 +1,21 @@
-﻿using Application.Queries.Books.GetBook.GetAll;
+﻿using Application.Interfaces.RepositoryInterfaces;
+using Application.Queries.Books.GetBook.GetAll;
 using Domain;
-using Infrastructure.Database;
+using Moq;
 
 namespace Test.BookTests.GetBookTests.GetAllBooksTests
 {
     [TestFixture]
     public class GetBookTest
     {
-        private FakeDatabase fakeDatabase;
+        private Mock<IRepository<Book>> mockBookRepository;
         private GetAllBooksFromDBQueryHandler handler;
 
         [SetUp]
         public void Setup()
         {
-            fakeDatabase = new FakeDatabase();
-            handler = new GetAllBooksFromDBQueryHandler(fakeDatabase);
+            mockBookRepository = new Mock<IRepository<Book>>();
+            handler = new GetAllBooksFromDBQueryHandler(mockBookRepository.Object);
         }
 
         [Test]
@@ -22,15 +23,16 @@ namespace Test.BookTests.GetBookTests.GetAllBooksTests
         {
             // Arrange
             var newBook = new Book("The Great Adventure", "Fiction");
-            fakeDatabase.Books.Add(newBook);
-
+            var books = new List<Book> { newBook };
             var query = new GetAllBooksFromDBQuery();
+
+            mockBookRepository.Setup(repo => repo.GetAll()).Returns(books);
 
             // Act
             var result = await handler.Handle(query, CancellationToken.None);
 
             // Assert
-            Assert.AreEqual(4, result.Count);
+            Assert.AreEqual(1, result.Count);
             Assert.Contains(newBook, result);
         }
 
@@ -38,8 +40,10 @@ namespace Test.BookTests.GetBookTests.GetAllBooksTests
         public void Handle_ShouldThrowException_WhenBooksListIsEmpty()
         {
             // Arrange
-            fakeDatabase.Books.Clear();
+            var books = new List<Book>();
             var query = new GetAllBooksFromDBQuery();
+
+            mockBookRepository.Setup(repo => repo.GetAll()).Returns(books);
 
             // Act
             var exception = Assert.ThrowsAsync<Exception>(() => handler.Handle(query, CancellationToken.None));
@@ -48,5 +52,5 @@ namespace Test.BookTests.GetBookTests.GetAllBooksTests
             Assert.AreEqual("Your list of books is empty", exception.Message);
         }
     }
-
 }
+

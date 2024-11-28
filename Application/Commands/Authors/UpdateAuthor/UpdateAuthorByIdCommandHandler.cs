@@ -1,36 +1,31 @@
 ﻿using Application.Dtos;
+using Application.Interfaces.RepositoryInterfaces;
 using Domain;
-using Infrastructure.Database;
 using MediatR;
 
 namespace Application.Commands.Authors.UpdateAuthor
 {
     public class UpdateAuthorByIdCommandHandler : IRequestHandler<UpdateAuthorByIdCommand, Author>
     {
-        private readonly FakeDatabase fakeDatabase;
+        private readonly IRepository<Author> _authorRepository;
 
-        public UpdateAuthorByIdCommandHandler(FakeDatabase fakeDatabase)
+        public UpdateAuthorByIdCommandHandler(IRepository<Author> authorRepository)
         {
-            this.fakeDatabase = fakeDatabase;
+            _authorRepository = authorRepository;
         }
         public Task<Author> Handle(UpdateAuthorByIdCommand request, CancellationToken cancellationToken)
         {
-            var authorToUpdate = GetAuthorById(request.Id);
+            var authorToUpdate = _authorRepository.GetById(request.Id);
+            if (authorToUpdate == null)
+            {
+                throw new Exception($"Author with ID {request.Id} not found.");
+            }
             ValidateUpdatedAuthor(request.UpdatedAuthor);
-
             UpdateAuthorDetails(authorToUpdate, request.UpdatedAuthor);
 
-            return Task.FromResult(authorToUpdate);
-        }
+            _authorRepository.Update(authorToUpdate);
 
-        private Author GetAuthorById(Guid id)
-        {
-            var author = fakeDatabase.Authors.FirstOrDefault(author => author.Id == id);
-            if (author == null)
-            {
-                throw new Exception($"Author with ID: {id} not found.");
-            }
-            return author;
+            return Task.FromResult(authorToUpdate);
         }
 
         private void ValidateUpdatedAuthor(AuthorDto updatedAuthor)

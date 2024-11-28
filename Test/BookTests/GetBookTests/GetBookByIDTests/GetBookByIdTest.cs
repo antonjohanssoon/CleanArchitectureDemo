@@ -1,20 +1,22 @@
-﻿using Application.Queries.Books.GetBook.GetById;
+﻿using Application.Interfaces.RepositoryInterfaces;
+using Application.Queries.Books.GetBook.GetById;
 using Domain;
-using Infrastructure.Database;
+using Moq;
 
 namespace Test.BookTests.GetBookTests.GetBookByIDTests
 {
     [TestFixture]
     public class GetBookByIdQueryHandlerTests
     {
-        private FakeDatabase fakeDatabase;
+        private Mock<IRepository<Book>> mockBookRepository;
         private GetBookByIdQueryHandler handler;
 
         [SetUp]
         public void Setup()
         {
-            fakeDatabase = new FakeDatabase();
-            handler = new GetBookByIdQueryHandler(fakeDatabase);
+            // Mocka IRepository<Book>
+            mockBookRepository = new Mock<IRepository<Book>>();
+            handler = new GetBookByIdQueryHandler(mockBookRepository.Object);
         }
 
         [Test]
@@ -22,9 +24,10 @@ namespace Test.BookTests.GetBookTests.GetBookByIDTests
         {
             // Arrange
             var book = new Book("Antons self-biography", "A book about me");
-            fakeDatabase.Books.Add(book);
-
             var query = new GetBookByIdQuery(book.Id);
+
+            // Mocka att GetById() returnerar boken
+            mockBookRepository.Setup(repo => repo.GetById(book.Id)).Returns(book);
 
             // Act
             var result = await handler.Handle(query, CancellationToken.None);
@@ -42,6 +45,9 @@ namespace Test.BookTests.GetBookTests.GetBookByIDTests
             var nonExistentBookId = Guid.NewGuid();
             var query = new GetBookByIdQuery(nonExistentBookId);
 
+            // Mocka att GetById() returnerar null för en ogiltig bok-ID
+            mockBookRepository.Setup(repo => repo.GetById(nonExistentBookId)).Returns((Book)null);
+
             // Act
             var exception = Assert.ThrowsAsync<KeyNotFoundException>(() => handler.Handle(query, CancellationToken.None));
 
@@ -49,6 +55,5 @@ namespace Test.BookTests.GetBookTests.GetBookByIDTests
             Assert.AreEqual($"Book with ID: {nonExistentBookId} was not found.", exception.Message);
         }
     }
-
-
 }
+

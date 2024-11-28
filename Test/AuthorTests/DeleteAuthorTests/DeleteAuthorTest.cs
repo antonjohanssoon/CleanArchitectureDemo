@@ -1,20 +1,21 @@
 ﻿using Application.Commands.Authors.DeleteAuthor;
+using Application.Interfaces.RepositoryInterfaces;
 using Domain;
-using Infrastructure.Database;
+using Moq;
 
 namespace Test.AuthorTests.DeleteAuthorTests
 {
     [TestFixture]
     public class DeleteAuthorByIdCommandHandlerTests
     {
-        private FakeDatabase fakeDatabase;
+        private Mock<IRepository<Author>> mockAuthorRepository;
         private DeleteAuthorByIdCommandHandler handler;
 
         [SetUp]
         public void Setup()
         {
-            fakeDatabase = new FakeDatabase();
-            handler = new DeleteAuthorByIdCommandHandler(fakeDatabase);
+            mockAuthorRepository = new Mock<IRepository<Author>>();
+            handler = new DeleteAuthorByIdCommandHandler(mockAuthorRepository.Object);
         }
 
         [Test]
@@ -22,15 +23,17 @@ namespace Test.AuthorTests.DeleteAuthorTests
         {
             // Arrange
             var authorToDelete = new Author("Anton Johansson", "Sport");
-            fakeDatabase.Authors.Add(authorToDelete);
             var command = new DeleteAuthorByIdCommand(authorToDelete.Id);
+
+            mockAuthorRepository.Setup(repo => repo.GetById(authorToDelete.Id)).Returns(authorToDelete);
+            mockAuthorRepository.Setup(repo => repo.Delete(authorToDelete)).Verifiable();
 
             // Act
             var result = await handler.Handle(command, CancellationToken.None);
 
             // Assert
+            mockAuthorRepository.Verify(repo => repo.Delete(authorToDelete), Times.Once);
             Assert.AreEqual(authorToDelete.Name, result.Name);
-            Assert.IsFalse(fakeDatabase.Authors.Contains(authorToDelete));
         }
 
         [Test]
@@ -40,6 +43,8 @@ namespace Test.AuthorTests.DeleteAuthorTests
             var nonExistentAuthorId = Guid.NewGuid();
             var command = new DeleteAuthorByIdCommand(nonExistentAuthorId);
 
+            mockAuthorRepository.Setup(repo => repo.GetById(nonExistentAuthorId)).Returns((Author)null);
+
             // Act
             var exception = Assert.ThrowsAsync<Exception>(() => handler.Handle(command, CancellationToken.None));
 
@@ -47,5 +52,4 @@ namespace Test.AuthorTests.DeleteAuthorTests
             Assert.AreEqual($"Author with ID: {nonExistentAuthorId} not found.", exception.Message);
         }
     }
-
 }

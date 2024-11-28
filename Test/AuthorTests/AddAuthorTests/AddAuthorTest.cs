@@ -1,20 +1,23 @@
 ﻿using Application.Commands.Authors.AddAuthor;
+using Application.Interfaces.RepositoryInterfaces;
 using Domain;
-using Infrastructure.Database;
+using Moq;
 
 namespace Test.AuthorTests.AddAuthorTests
 {
+
     [TestFixture]
     public class AddAuthorCommandHandlerTests
     {
-        private FakeDatabase fakeDatabase;
+        private Mock<IRepository<Author>> mockAuthorRepository;
         private AddAuthorCommandHandler handler;
 
         [SetUp]
         public void Setup()
         {
-            fakeDatabase = new FakeDatabase();
-            handler = new AddAuthorCommandHandler(fakeDatabase);
+            // Mocka IRepository<Author>
+            mockAuthorRepository = new Mock<IRepository<Author>>();
+            handler = new AddAuthorCommandHandler(mockAuthorRepository.Object);
         }
 
         [Test]
@@ -28,10 +31,14 @@ namespace Test.AuthorTests.AddAuthorTests
             };
             var command = new AddAuthorCommand(newAuthor);
 
+            // Mocka att Add metoden anropas (vi ignorerar implementationen för nu)
+            mockAuthorRepository.Setup(repo => repo.Add(It.IsAny<Author>())).Verifiable();
+
             // Act
             var result = await handler.Handle(command, CancellationToken.None);
 
             // Assert
+            mockAuthorRepository.Verify(repo => repo.Add(It.IsAny<Author>()), Times.Once); // Verifiera att Add anropades exakt en gång
             Assert.AreEqual(newAuthor.Name, result.Name);
             Assert.AreEqual(newAuthor.BookCategory, result.BookCategory);
         }
@@ -84,7 +91,8 @@ namespace Test.AuthorTests.AddAuthorTests
             };
             var command = new AddAuthorCommand(newAuthor);
 
-            fakeDatabase.Authors.Add(existingAuthor);
+            // Mocka att GetAll() returnerar en lista som redan innehåller en författare med samma namn
+            mockAuthorRepository.Setup(repo => repo.GetAll()).Returns(new[] { existingAuthor });
 
             // Act 
             var exception = Assert.ThrowsAsync<Exception>(() => handler.Handle(command, CancellationToken.None));
@@ -92,7 +100,7 @@ namespace Test.AuthorTests.AddAuthorTests
             // Assert
             Assert.AreEqual($"Author with name '{newAuthor.Name}' already exists.", exception.Message);
         }
-
     }
+
 
 }

@@ -1,21 +1,21 @@
-﻿using Domain;
-using Infrastructure.Database;
+﻿using Application.Interfaces.RepositoryInterfaces;
+using Domain;
 using MediatR;
 
 namespace Application.Queries.Authors.GetAuthor.GetById
 {
     public class GetAuthorByIdQueryHandler : IRequestHandler<GetAuthorByIdQuery, Author>
     {
-        private readonly FakeDatabase fakeDatabase;
+        private readonly IRepository<Author> _authorRepository;
 
-        public GetAuthorByIdQueryHandler(FakeDatabase fakeDatabase)
+        public GetAuthorByIdQueryHandler(IRepository<Author> authorRepository)
         {
-            this.fakeDatabase = fakeDatabase;
+            _authorRepository = authorRepository;
         }
 
         public Task<Author> Handle(GetAuthorByIdQuery request, CancellationToken cancellationToken)
         {
-            var author = fakeDatabase.Authors.FirstOrDefault(author => author.Id == request.Id);
+            var author = _authorRepository.GetById(request.Id);
 
             if (author == null)
             {
