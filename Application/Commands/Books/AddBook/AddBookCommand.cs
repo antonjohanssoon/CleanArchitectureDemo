@@ -6,11 +6,18 @@ namespace Application.Commands.Books.AddBook
 {
     public class AddBookCommand : IRequest<Book>
     {
-        public AddBookCommand(BookDto newBook)
+        private BookDto bookDto;
+
+        public AddBookCommand(Book newBook)
         {
             NewBook = newBook;
         }
 
-        public BookDto NewBook { get; }
+        public AddBookCommand(BookDto bookDto)
+        {
+            this.bookDto = bookDto;
+        }
+
+        public Book NewBook { get; }
     }
 }
