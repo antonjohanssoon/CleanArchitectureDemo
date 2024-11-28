@@ -28,20 +28,20 @@
             {
                 // Arrange
                 fakeDatabase.Users.Clear();
-                var newUserDto = new UserDto
+                var newUser = new User
                 {
                     Username = "newUser",
                     Password = "password123"
                 };
-                var command = new AddUserCommand(newUserDto);
+                var command = new AddUserCommand(newUser);
 
                 // Act
                 var result = await handler.Handle(command, CancellationToken.None);
 
                 // Assert
                 Assert.IsNotNull(result);
-                Assert.AreEqual(newUserDto.Username, result.Username);
-                Assert.AreEqual(newUserDto.Password, result.Password);
+                Assert.AreEqual(newUser.Username, result.Username);
+                Assert.AreEqual(newUser.Password, result.Password);
                 Assert.AreEqual(1, fakeDatabase.Users.Count);
                 Assert.Contains(result, fakeDatabase.Users);
             }
@@ -89,12 +89,12 @@
                 var existingUser = new User("existingUser", "password123");
                 fakeDatabase.Users.Add(existingUser);
 
-                var newUserDto = new UserDto
+                var newUser = new User
                 {
                     Username = "existingUser",
                     Password = "password456"
                 };
-                var command = new AddUserCommand(newUserDto);
+                var command = new AddUserCommand(newUser);
 
                 // Act
                 var exception = Assert.ThrowsAsync<Exception>(() => handler.Handle(command, CancellationToken.None));

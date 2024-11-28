@@ -1,5 +1,4 @@
-﻿using Application.Dtos;
-using Domain;
+﻿using Domain;
 using Infrastructure.Database;
 using MediatR;
 
@@ -18,13 +17,12 @@ namespace Application.Commands.Books.AddBook
         {
             ValidateBook(request.NewBook);
 
-            var newBook = new Book(request.NewBook.Title, request.NewBook.Description);
-            fakeDatabase.Books.Add(newBook);
+            fakeDatabase.Books.Add(request.NewBook);
 
-            return Task.FromResult(newBook);
+            return Task.FromResult(request.NewBook);
         }
 
-        private void ValidateBook(BookDto book)
+        private void ValidateBook(Book book)
         {
             if (string.IsNullOrWhiteSpace(book.Title))
             {

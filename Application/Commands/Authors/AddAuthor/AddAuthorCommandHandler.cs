@@ -1,5 +1,4 @@
-﻿using Application.Dtos;
-using Domain;
+﻿using Domain;
 using Infrastructure.Database;
 using MediatR;
 
@@ -19,13 +18,13 @@ namespace Application.Commands.Authors.AddAuthor
             ValidateAuthor(request.NewAuthor);
             CheckForDuplicateAuthor(request.NewAuthor);
 
-            var newAuthor = new Author(request.NewAuthor.Name, request.NewAuthor.BookCategory);
-            fakeDatabase.Authors.Add(newAuthor);
 
-            return Task.FromResult(newAuthor);
+            fakeDatabase.Authors.Add(request.NewAuthor);
+
+            return Task.FromResult(request.NewAuthor);
         }
 
-        private void ValidateAuthor(AuthorDto author)
+        private void ValidateAuthor(Author author)
         {
 
             if (string.IsNullOrWhiteSpace(author.Name))
@@ -39,7 +38,7 @@ namespace Application.Commands.Authors.AddAuthor
             }
         }
 
-        private void CheckForDuplicateAuthor(AuthorDto author)
+        private void CheckForDuplicateAuthor(Author author)
         {
             if (fakeDatabase.Authors.Any(existingAuthor => existingAuthor.Name.Equals(author.Name, StringComparison.OrdinalIgnoreCase)))
             {

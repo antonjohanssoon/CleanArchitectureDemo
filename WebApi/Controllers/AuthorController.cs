@@ -4,6 +4,7 @@ using Application.Commands.Authors.UpdateAuthor;
 using Application.Dtos;
 using Application.Queries.Authors.GetAuthor.GetAll;
 using Application.Queries.Authors.GetAuthor.GetById;
+using Domain;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -43,7 +44,7 @@ namespace WebApi.Controllers
         // POST api/<AuthorController>
         [HttpPost]
         [Route("addNewAuthor")]
-        public async Task<IActionResult> AddNewAuthor([FromBody] AuthorDto newAuthor)
+        public async Task<IActionResult> AddNewAuthor([FromBody] Author newAuthor)
         {
             return Ok(await mediator.Send(new AddAuthorCommand(newAuthor)));
         }

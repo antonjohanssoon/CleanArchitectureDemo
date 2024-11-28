@@ -13,11 +13,9 @@
             Description = description;
         }
 
-        public Book(Guid id, string title, string description)
+        public Book()
         {
-            Id = id;
-            Title = title;
-            Description = description;
+
         }
     }
 }

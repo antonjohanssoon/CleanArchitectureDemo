@@ -13,11 +13,9 @@
             BookCategory = bookCategory;
         }
 
-        public Author(Guid id, string name, string bookCategory)
+        public Author()
         {
-            Id = id;
-            Name = name;
-            BookCategory = bookCategory;
+
         }
     }
 }
