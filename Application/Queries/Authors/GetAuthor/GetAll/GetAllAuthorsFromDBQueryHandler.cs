@@ -1,26 +1,29 @@
-﻿using Domain;
-using Infrastructure.Database;
+﻿using Application.Interfaces.RepositoryInterfaces;
+using Domain;
 using MediatR;
 
 namespace Application.Queries.Authors.GetAuthor.GetAll
 {
     public class GetAllAuthorsFromDBQueryHandler : IRequestHandler<GetAllAuthorsFromDBQuery, List<Author>>
     {
-        private readonly FakeDatabase fakeDatabase;
+        private readonly IRepository<Author> _authorRepository;
 
-        public GetAllAuthorsFromDBQueryHandler(FakeDatabase fakeDatabase)
+        public GetAllAuthorsFromDBQueryHandler(IRepository<Author> authorRepository)
         {
-            this.fakeDatabase = fakeDatabase;
+            _authorRepository = authorRepository;
         }
 
         public Task<List<Author>> Handle(GetAllAuthorsFromDBQuery request, CancellationToken cancellationToken)
         {
-            if (fakeDatabase.Authors.Count == 0)
+            var authors = _authorRepository.GetAll().ToList();
+
+            if (authors.Count == 0)
             {
-                throw new Exception($"Your list of authors is empty");
+                throw new Exception("Your list of authors is empty");
             }
 
-            return Task.FromResult(fakeDatabase.Authors);
+            return Task.FromResult(authors);
         }
     }
+
 }

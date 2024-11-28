@@ -1,20 +1,24 @@
-﻿using Application.Queries.Authors.GetAuthor.GetById;
+﻿using Application.Interfaces.RepositoryInterfaces;
+using Application.Queries.Authors.GetAuthor.GetById;
 using Domain;
-using Infrastructure.Database;
+using Moq;
 
 namespace Test.AuthorTests.GetAuthorTests.GetAuthorByIdTest
 {
     [TestFixture]
     public class GetAuthorByIdQueryHandlerTests
     {
-        private FakeDatabase fakeDatabase;
+        private Mock<IRepository<Author>> authorRepositoryMock;
         private GetAuthorByIdQueryHandler handler;
 
         [SetUp]
         public void Setup()
         {
-            fakeDatabase = new FakeDatabase();
-            handler = new GetAuthorByIdQueryHandler(fakeDatabase);
+            // Mocka IRepository<Author>
+            authorRepositoryMock = new Mock<IRepository<Author>>();
+
+            // Skapa handler och injicera mocken
+            handler = new GetAuthorByIdQueryHandler(authorRepositoryMock.Object);
         }
 
         [Test]
@@ -22,7 +26,9 @@ namespace Test.AuthorTests.GetAuthorTests.GetAuthorByIdTest
         {
             // Arrange
             var author = new Author("Anton Johansson", "Sport");
-            fakeDatabase.Authors.Add(author);
+
+            // Mocka GetById för att returnera en författare direkt
+            authorRepositoryMock.Setup(repo => repo.GetById(author.Id)).Returns(author);
 
             var query = new GetAuthorByIdQuery(author.Id);
 
@@ -40,6 +46,10 @@ namespace Test.AuthorTests.GetAuthorTests.GetAuthorByIdTest
         {
             // Arrange
             var nonExistentAuthorId = Guid.NewGuid();
+
+            // Mocka GetById för att returnera null för icke-existerande författare
+            authorRepositoryMock.Setup(repo => repo.GetById(nonExistentAuthorId)).Returns((Author)null);
+
             var query = new GetAuthorByIdQuery(nonExistentAuthorId);
 
             // Act
@@ -50,5 +60,5 @@ namespace Test.AuthorTests.GetAuthorTests.GetAuthorByIdTest
         }
     }
 
-
 }
+

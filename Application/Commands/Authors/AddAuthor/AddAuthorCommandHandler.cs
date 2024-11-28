@@ -1,16 +1,16 @@
-﻿using Domain;
-using Infrastructure.Database;
+﻿using Application.Interfaces.RepositoryInterfaces;
+using Domain;
 using MediatR;
 
 namespace Application.Commands.Authors.AddAuthor
 {
     public class AddAuthorCommandHandler : IRequestHandler<AddAuthorCommand, Author>
     {
-        private readonly FakeDatabase fakeDatabase;
+        private readonly IRepository<Author> _authorRepository;
 
-        public AddAuthorCommandHandler(FakeDatabase fakeDatabase)
+        public AddAuthorCommandHandler(IRepository<Author> authorRepository)
         {
-            this.fakeDatabase = fakeDatabase;
+            _authorRepository = authorRepository;
         }
 
         public Task<Author> Handle(AddAuthorCommand request, CancellationToken cancellationToken)
@@ -19,7 +19,7 @@ namespace Application.Commands.Authors.AddAuthor
             CheckForDuplicateAuthor(request.NewAuthor);
 
 
-            fakeDatabase.Authors.Add(request.NewAuthor);
+            _authorRepository.Add(request.NewAuthor);
 
             return Task.FromResult(request.NewAuthor);
         }
@@ -40,7 +40,9 @@ namespace Application.Commands.Authors.AddAuthor
 
         private void CheckForDuplicateAuthor(Author author)
         {
-            if (fakeDatabase.Authors.Any(existingAuthor => existingAuthor.Name.Equals(author.Name, StringComparison.OrdinalIgnoreCase)))
+            var existingAuthors = _authorRepository.GetAll();
+            if (existingAuthors.Any(existingAuthor =>
+                existingAuthor.Name.Equals(author.Name, StringComparison.OrdinalIgnoreCase)))
             {
                 throw new Exception($"Author with name '{author.Name}' already exists.");
             }
