@@ -33,9 +33,9 @@ namespace Test.BookTests.GetBookTests.GetBookByIDTests
             var result = await handler.Handle(query, CancellationToken.None);
 
             // Assert
-            Assert.AreEqual(book.Id, result.Id);
-            Assert.AreEqual(book.Title, result.Title);
-            Assert.AreEqual(book.Description, result.Description);
+            Assert.AreEqual(book.Id, result.Data.Id);
+            Assert.AreEqual(book.Title, result.Data.Title);
+            Assert.AreEqual(book.Description, result.Data.Description);
         }
 
         [Test]

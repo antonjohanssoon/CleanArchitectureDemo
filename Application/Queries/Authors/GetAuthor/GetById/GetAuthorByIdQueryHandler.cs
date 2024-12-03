@@ -4,7 +4,7 @@ using MediatR;
 
 namespace Application.Queries.Authors.GetAuthor.GetById
 {
-    public class GetAuthorByIdQueryHandler : IRequestHandler<GetAuthorByIdQuery, Author>
+    public class GetAuthorByIdQueryHandler : IRequestHandler<GetAuthorByIdQuery, OperationResult<Author>>
     {
         private readonly IRepository<Author> _authorRepository;
 
@@ -13,16 +13,15 @@ namespace Application.Queries.Authors.GetAuthor.GetById
             _authorRepository = authorRepository;
         }
 
-        public Task<Author> Handle(GetAuthorByIdQuery request, CancellationToken cancellationToken)
+        public Task<OperationResult<Author>> Handle(GetAuthorByIdQuery request, CancellationToken cancellationToken)
         {
             var author = _authorRepository.GetById(request.Id);
 
-            if (author == null)
+            if (author != null)
             {
-                throw new KeyNotFoundException($"Author with ID: {request.Id} was not found.");
+                return Task.FromResult(OperationResult<Author>.Successfull(author));
             }
-
-            return Task.FromResult(author);
+            return Task.FromResult(OperationResult<Author>.Failure($"Author with ID: {request.Id} was not found."));
         }
     }
 }

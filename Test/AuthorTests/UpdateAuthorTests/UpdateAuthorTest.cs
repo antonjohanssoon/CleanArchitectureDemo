@@ -39,9 +39,9 @@ namespace Test.AuthorTests.UpdateAuthorTests
             var result = handler.Handle(command, CancellationToken.None).Result;
 
             // Assert
-            Assert.AreEqual(updatedAuthorDto.Name, result.Name);
-            Assert.AreEqual(updatedAuthorDto.BookCategory, result.BookCategory);
-            Assert.AreEqual(existingAuthor.Id, result.Id);
+            Assert.AreEqual(updatedAuthorDto.Name, result.Data.Name);
+            Assert.AreEqual(updatedAuthorDto.BookCategory, result.Data.BookCategory);
+            Assert.AreEqual(existingAuthor.Id, result.Data.Id);
         }
 
         [Test]

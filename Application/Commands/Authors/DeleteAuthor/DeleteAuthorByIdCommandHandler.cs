@@ -4,7 +4,7 @@ using MediatR;
 
 namespace Application.Commands.Authors.DeleteAuthor
 {
-    public class DeleteAuthorByIdCommandHandler : IRequestHandler<DeleteAuthorByIdCommand, Author>
+    public class DeleteAuthorByIdCommandHandler : IRequestHandler<DeleteAuthorByIdCommand, OperationResult<Author>>
     {
         private readonly IRepository<Author> _authorRepository;
 
@@ -13,17 +13,17 @@ namespace Application.Commands.Authors.DeleteAuthor
             _authorRepository = authorRepository;
         }
 
-        public Task<Author> Handle(DeleteAuthorByIdCommand request, CancellationToken cancellationToken)
+        public Task<OperationResult<Author>> Handle(DeleteAuthorByIdCommand request, CancellationToken cancellationToken)
         {
             var authorToDelete = _authorRepository.GetById(request.Id);
 
-            if (authorToDelete == null)
+            if (authorToDelete != null)
             {
-                throw new Exception($"Author with ID: {request.Id} not found.");
+                _authorRepository.Delete(authorToDelete);
+                return Task.FromResult(OperationResult<Author>.Successfull(authorToDelete));
             }
 
-            _authorRepository.Delete(authorToDelete);
-            return Task.FromResult(authorToDelete);
+            return Task.FromResult(OperationResult<Author>.Failure($"Author with ID: {request.Id} was not found."));
         }
     }
 }

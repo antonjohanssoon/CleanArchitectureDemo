@@ -32,8 +32,8 @@ namespace Test.BookTests.GetBookTests.GetAllBooksTests
             var result = await handler.Handle(query, CancellationToken.None);
 
             // Assert
-            Assert.AreEqual(1, result.Count);
-            Assert.Contains(newBook, result);
+            Assert.AreEqual(1, result.Data.Count);
+            Assert.Contains(newBook, result.Data);
         }
 
         [Test]

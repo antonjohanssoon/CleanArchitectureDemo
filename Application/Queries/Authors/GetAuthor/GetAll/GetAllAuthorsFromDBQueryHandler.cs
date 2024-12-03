@@ -4,7 +4,7 @@ using MediatR;
 
 namespace Application.Queries.Authors.GetAuthor.GetAll
 {
-    public class GetAllAuthorsFromDBQueryHandler : IRequestHandler<GetAllAuthorsFromDBQuery, List<Author>>
+    public class GetAllAuthorsFromDBQueryHandler : IRequestHandler<GetAllAuthorsFromDBQuery, OperationResult<List<Author>>>
     {
         private readonly IRepository<Author> _authorRepository;
 
@@ -13,16 +13,16 @@ namespace Application.Queries.Authors.GetAuthor.GetAll
             _authorRepository = authorRepository;
         }
 
-        public Task<List<Author>> Handle(GetAllAuthorsFromDBQuery request, CancellationToken cancellationToken)
+        public Task<OperationResult<List<Author>>> Handle(GetAllAuthorsFromDBQuery request, CancellationToken cancellationToken)
         {
             var authors = _authorRepository.GetAll().ToList();
 
-            if (authors.Count == 0)
+            if (authors.Any())
             {
-                throw new Exception("Your list of authors is empty");
+                return Task.FromResult(OperationResult<List<Author>>.Successfull(authors));
             }
 
-            return Task.FromResult(authors);
+            return Task.FromResult(OperationResult<List<Author>>.Failure($"Your list of authors are empty..."));
         }
     }
 

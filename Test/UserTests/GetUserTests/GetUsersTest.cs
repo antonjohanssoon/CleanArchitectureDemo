@@ -40,9 +40,9 @@
 
             // Assert
             Assert.IsNotNull(result);
-            Assert.AreEqual(2, result.Count);
-            Assert.Contains(user1, result);
-            Assert.Contains(user2, result);
+            Assert.AreEqual(2, result.Data.Count);
+            Assert.Contains(user1, result.Data);
+            Assert.Contains(user2, result.Data);
         }
 
         [Test]

@@ -4,6 +4,7 @@ using Application.Commands.Books.UpdateBook;
 using Application.Dtos;
 using Application.Queries.Books.GetBook.GetAll;
 using Application.Queries.Books.GetBook.GetById;
+using Domain;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -27,7 +28,13 @@ namespace WebApi.Controllers
         [Route("getAllBooks")]
         public async Task<IActionResult> GetAllBooks()
         {
-            return Ok(await mediator.Send(new GetAllBooksFromDBQuery()));
+            var result = await mediator.Send(new GetAllBooksFromDBQuery());
+
+            if (!result.IsSuccessfull)
+            {
+                return BadRequest(new { message = result.Message, errors = result.ErrorMessage });
+            }
+            return Ok(new { message = result.Message, data = result.Data });
         }
 
         // GET api/<BookController>/5
@@ -35,23 +42,44 @@ namespace WebApi.Controllers
         [Route("getBookById/{bookId}")]
         public async Task<IActionResult> GetBookById(Guid bookId)
         {
-            return Ok(await mediator.Send(new GetBookByIdQuery(bookId)));
+            var query = new GetBookByIdQuery(bookId);
+            var result = await mediator.Send(query);
+
+            if (!result.IsSuccessfull)
+            {
+                return BadRequest(new { message = result.Message, errors = result.ErrorMessage });
+            }
+            return Ok(new { message = result.Message, data = result.Data });
         }
 
         // POST api/<BookController>
         [HttpPost]
         [Route("addNewBook")]
-        public async Task<IActionResult> AddNewBook([FromBody] BookDto newBook)
+        public async Task<IActionResult> AddNewBook([FromBody] Book newBook)
         {
-            return Ok(await mediator.Send(new AddBookCommand(newBook)));
+            var command = new AddBookCommand(newBook);
+            var result = await mediator.Send(command);
+
+            if (!result.IsSuccessfull)
+            {
+                return BadRequest(new { message = result.Message, errors = result.ErrorMessage });
+            }
+            return Ok(new { message = result.Message, data = result.Data });
         }
 
         // PUT api/<BookController>/5
         [HttpPut]
         [Route("updateBook/{updatedBookId}")]
-        public async Task<IActionResult> UpdateBook(Guid updatedBookId, [FromBody] BookDto updatedBook)
+        public async Task<IActionResult> UpdateBook(Guid bookId, [FromBody] BookDto updatedBook)
         {
-            return Ok(await mediator.Send(new UpdateBookByIdCommand(updatedBookId, updatedBook)));
+            var command = new UpdateBookByIdCommand(bookId, updatedBook);
+            var result = await mediator.Send(command);
+
+            if (!result.IsSuccessfull)
+            {
+                return BadRequest(new { message = result.Message, errors = result.ErrorMessage });
+            }
+            return Ok(new { message = result.Message, data = result.Data });
         }
 
         // DELETE api/<BookController>/5
@@ -59,7 +87,14 @@ namespace WebApi.Controllers
         [Route("deleteBookById/{bookId}")]
         public async Task<IActionResult> DeleteBookById(Guid bookId)
         {
-            return Ok(await mediator.Send(new DeleteBookByIdCommand(bookId)));
+            var command = new DeleteBookByIdCommand(bookId);
+            var result = await mediator.Send(command);
+
+            if (!result.IsSuccessfull)
+            {
+                return BadRequest(new { message = result.Message, errors = result.ErrorMessage });
+            }
+            return Ok(new { message = result.Message, data = result.Data });
         }
     }
 }

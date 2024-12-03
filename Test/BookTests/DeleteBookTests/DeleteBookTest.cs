@@ -35,9 +35,9 @@ namespace Test.BookTests.DeleteBookTests
 
             // Assert
             mockBookRepository.Verify(repo => repo.Delete(bookToDelete), Times.Once); // Verifiera att Delete anropades exakt en gång
-            Assert.AreEqual(bookToDelete.Id, result.Id);
-            Assert.AreEqual(bookToDelete.Title, result.Title);
-            Assert.AreEqual(bookToDelete.Description, result.Description);
+            Assert.AreEqual(bookToDelete.Id, result.Data.Id);
+            Assert.AreEqual(bookToDelete.Title, result.Data.Title);
+            Assert.AreEqual(bookToDelete.Description, result.Data.Description);
         }
 
         [Test]

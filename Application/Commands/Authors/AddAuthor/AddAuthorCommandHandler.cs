@@ -4,7 +4,7 @@ using MediatR;
 
 namespace Application.Commands.Authors.AddAuthor
 {
-    public class AddAuthorCommandHandler : IRequestHandler<AddAuthorCommand, Author>
+    public class AddAuthorCommandHandler : IRequestHandler<AddAuthorCommand, OperationResult<Author>>
     {
         private readonly IRepository<Author> _authorRepository;
 
@@ -13,39 +13,52 @@ namespace Application.Commands.Authors.AddAuthor
             _authorRepository = authorRepository;
         }
 
-        public Task<Author> Handle(AddAuthorCommand request, CancellationToken cancellationToken)
+        public Task<OperationResult<Author>> Handle(AddAuthorCommand request, CancellationToken cancellationToken)
         {
-            ValidateAuthor(request.NewAuthor);
-            CheckForDuplicateAuthor(request.NewAuthor);
 
+            var validationResult = ValidateAuthor(request.NewAuthor);
+            if (!validationResult.IsSuccessfull)
+            {
+                return Task.FromResult(validationResult);
+            }
+
+            var duplicateCheckResult = CheckForDuplicateAuthor(request.NewAuthor);
+            if (!duplicateCheckResult.IsSuccessfull)
+            {
+                return Task.FromResult(duplicateCheckResult);
+            }
 
             _authorRepository.Add(request.NewAuthor);
 
-            return Task.FromResult(request.NewAuthor);
+            return Task.FromResult(OperationResult<Author>.Successfull(request.NewAuthor, "Author added successfully."));
         }
 
-        private void ValidateAuthor(Author author)
+        private OperationResult<Author> ValidateAuthor(Author author)
         {
-
             if (string.IsNullOrWhiteSpace(author.Name))
             {
-                throw new Exception("Author name is required and cannot be empty.");
+                return OperationResult<Author>.Failure("Author name is required and cannot be empty.");
             }
 
             if (string.IsNullOrWhiteSpace(author.BookCategory))
             {
-                throw new Exception("Author book category is required and cannot be empty.");
+                return OperationResult<Author>.Failure("Author book category is required and cannot be empty.");
             }
+
+            return OperationResult<Author>.Successfull(author);
         }
 
-        private void CheckForDuplicateAuthor(Author author)
+        private OperationResult<Author> CheckForDuplicateAuthor(Author author)
         {
             var existingAuthors = _authorRepository.GetAll();
             if (existingAuthors.Any(existingAuthor =>
                 existingAuthor.Name.Equals(author.Name, StringComparison.OrdinalIgnoreCase)))
             {
-                throw new Exception($"Author with name '{author.Name}' already exists.");
+                return OperationResult<Author>.Failure($"Author with name '{author.Name}' already exists.");
             }
+
+            return OperationResult<Author>.Successfull(author);
         }
     }
+
 }

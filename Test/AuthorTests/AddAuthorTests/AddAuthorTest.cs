@@ -39,8 +39,8 @@ namespace Test.AuthorTests.AddAuthorTests
 
             // Assert
             mockAuthorRepository.Verify(repo => repo.Add(It.IsAny<Author>()), Times.Once); // Verifiera att Add anropades exakt en gång
-            Assert.AreEqual(newAuthor.Name, result.Name);
-            Assert.AreEqual(newAuthor.BookCategory, result.BookCategory);
+            Assert.AreEqual(newAuthor.Name, result.Data.Name);
+            Assert.AreEqual(newAuthor.BookCategory, result.Data.BookCategory);
         }
 
         [Test]
@@ -91,7 +91,6 @@ namespace Test.AuthorTests.AddAuthorTests
             };
             var command = new AddAuthorCommand(newAuthor);
 
-            // Mocka att GetAll() returnerar en lista som redan innehåller en författare med samma namn
             mockAuthorRepository.Setup(repo => repo.GetAll()).Returns(new[] { existingAuthor });
 
             // Act 

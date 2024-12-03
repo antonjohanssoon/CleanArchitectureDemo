@@ -39,8 +39,8 @@ namespace Test.UserTests
             // Assert
             mockUserRepository.Verify(repo => repo.Add(It.IsAny<User>()), Times.Once);
             Assert.IsNotNull(result);
-            Assert.AreEqual(newUser.Username, result.Username);
-            Assert.AreEqual(newUser.Password, result.Password);
+            Assert.AreEqual(newUser.Username, result.Data.Username);
+            Assert.AreEqual(newUser.Password, result.Data.Password);
         }
 
         [Test]

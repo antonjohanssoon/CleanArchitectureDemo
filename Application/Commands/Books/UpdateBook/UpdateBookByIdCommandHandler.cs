@@ -5,7 +5,7 @@ using MediatR;
 
 namespace Application.Commands.Books.UpdateBook
 {
-    public class UpdateBookByIdCommandHandler : IRequestHandler<UpdateBookByIdCommand, Book>
+    public class UpdateBookByIdCommandHandler : IRequestHandler<UpdateBookByIdCommand, OperationResult<Book>>
     {
         private readonly IRepository<Book> _bookRepository;
 
@@ -14,34 +14,40 @@ namespace Application.Commands.Books.UpdateBook
             _bookRepository = bookRepository;
         }
 
-        public Task<Book> Handle(UpdateBookByIdCommand request, CancellationToken cancellationToken)
+        public Task<OperationResult<Book>> Handle(UpdateBookByIdCommand request, CancellationToken cancellationToken)
         {
             var bookToUpdate = _bookRepository.GetById(request.Id);
             if (bookToUpdate == null)
             {
-                throw new Exception($"Book with ID: {request.Id} not found.");
+                return Task.FromResult(OperationResult<Book>.Failure($"Book with ID: {request.Id} not found."));
             }
 
-            ValidateUpdatedBook(request.UpdatedBook);
+            var validationResult = ValidateUpdatedBook(request.UpdatedBook);
+            if (!validationResult.IsSuccessfull)
+            {
+                return Task.FromResult(validationResult);
+            }
 
             UpdateBookDetails(bookToUpdate, request.UpdatedBook);
 
             _bookRepository.Update(bookToUpdate);
 
-            return Task.FromResult(bookToUpdate);
+            return Task.FromResult(OperationResult<Book>.Successfull(bookToUpdate, "Book updated successfully."));
         }
 
-        private void ValidateUpdatedBook(BookDto updatedBook)
+        private OperationResult<Book> ValidateUpdatedBook(BookDto updatedBook)
         {
             if (string.IsNullOrWhiteSpace(updatedBook.Title))
             {
-                throw new Exception("Book title cannot be empty.");
+                return OperationResult<Book>.Failure("Book title cannot be empty.");
             }
 
             if (string.IsNullOrWhiteSpace(updatedBook.Description))
             {
-                throw new Exception("Book description cannot be empty.");
+                return OperationResult<Book>.Failure("Book description cannot be empty.");
             }
+
+            return OperationResult<Book>.Successfull(null);
         }
 
         private void UpdateBookDetails(Book existingBook, BookDto updatedBook)
@@ -49,6 +55,6 @@ namespace Application.Commands.Books.UpdateBook
             existingBook.Title = updatedBook.Title;
             existingBook.Description = updatedBook.Description;
         }
-
     }
+
 }

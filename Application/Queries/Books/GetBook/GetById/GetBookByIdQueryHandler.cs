@@ -4,7 +4,7 @@ using MediatR;
 
 namespace Application.Queries.Books.GetBook.GetById
 {
-    public class GetBookByIdQueryHandler : IRequestHandler<GetBookByIdQuery, Book>
+    public class GetBookByIdQueryHandler : IRequestHandler<GetBookByIdQuery, OperationResult<Book>>
     {
         private readonly IRepository<Book> _bookRepository;
 
@@ -13,16 +13,16 @@ namespace Application.Queries.Books.GetBook.GetById
             _bookRepository = repository;
         }
 
-        public Task<Book> Handle(GetBookByIdQuery request, CancellationToken cancellationToken)
+        public Task<OperationResult<Book>> Handle(GetBookByIdQuery request, CancellationToken cancellationToken)
         {
             var book = _bookRepository.GetById(request.Id);
 
-            if (book == null)
+            if (book != null)
             {
-                throw new KeyNotFoundException($"Book with ID: {request.Id} was not found.");
+                return Task.FromResult(OperationResult<Book>.Successfull(book));
             }
 
-            return Task.FromResult(book);
+            return Task.FromResult(OperationResult<Book>.Failure($"Book with ID: {request.Id} was not found."));
         }
     }
 }
