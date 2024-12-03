@@ -32,8 +32,8 @@ namespace Test.AuthorTests.GetAuthorTests.GetAllAuthorsTests
             var result = await handler.Handle(query, CancellationToken.None);
 
             // Assert
-            Assert.AreEqual(1, result.Count);
-            Assert.Contains(newAuthor, result);
+            Assert.AreEqual(1, result.Data.Count);
+            Assert.Contains(newAuthor, result.Data);
         }
 
         [Test]

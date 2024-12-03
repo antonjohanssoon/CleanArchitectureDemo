@@ -33,7 +33,7 @@ namespace Test.AuthorTests.DeleteAuthorTests
 
             // Assert
             mockAuthorRepository.Verify(repo => repo.Delete(authorToDelete), Times.Once);
-            Assert.AreEqual(authorToDelete.Name, result.Name);
+            Assert.AreEqual(authorToDelete.Name, result.Data.Name);
         }
 
         [Test]

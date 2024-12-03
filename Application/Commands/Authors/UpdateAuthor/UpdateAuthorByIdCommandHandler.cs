@@ -5,7 +5,7 @@ using MediatR;
 
 namespace Application.Commands.Authors.UpdateAuthor
 {
-    public class UpdateAuthorByIdCommandHandler : IRequestHandler<UpdateAuthorByIdCommand, Author>
+    public class UpdateAuthorByIdCommandHandler : IRequestHandler<UpdateAuthorByIdCommand, OperationResult<Author>>
     {
         private readonly IRepository<Author> _authorRepository;
 
@@ -13,32 +13,42 @@ namespace Application.Commands.Authors.UpdateAuthor
         {
             _authorRepository = authorRepository;
         }
-        public Task<Author> Handle(UpdateAuthorByIdCommand request, CancellationToken cancellationToken)
+
+        public Task<OperationResult<Author>> Handle(UpdateAuthorByIdCommand request, CancellationToken cancellationToken)
         {
             var authorToUpdate = _authorRepository.GetById(request.Id);
             if (authorToUpdate == null)
             {
-                throw new Exception($"Author with ID {request.Id} not found.");
+                return Task.FromResult(OperationResult<Author>.Failure($"Author with ID {request.Id} not found."));
             }
-            ValidateUpdatedAuthor(request.UpdatedAuthor);
+
+            // Validera uppdaterade författarens information
+            var validationResult = ValidateUpdatedAuthor(request.UpdatedAuthor);
+            if (!validationResult.IsSuccessfull)
+            {
+                return Task.FromResult(validationResult);
+            }
+
             UpdateAuthorDetails(authorToUpdate, request.UpdatedAuthor);
 
             _authorRepository.Update(authorToUpdate);
 
-            return Task.FromResult(authorToUpdate);
+            return Task.FromResult(OperationResult<Author>.Successfull(authorToUpdate, "Author updated successfully."));
         }
 
-        private void ValidateUpdatedAuthor(AuthorDto updatedAuthor)
+        private OperationResult<Author> ValidateUpdatedAuthor(AuthorDto updatedAuthor)
         {
             if (string.IsNullOrWhiteSpace(updatedAuthor.Name))
             {
-                throw new Exception("Author name cannot be empty.");
+                return OperationResult<Author>.Failure("Author name cannot be empty.");
             }
 
             if (string.IsNullOrWhiteSpace(updatedAuthor.BookCategory))
             {
-                throw new Exception("Book category cannot be empty.");
+                return OperationResult<Author>.Failure("Book category cannot be empty.");
             }
+
+            return OperationResult<Author>.Successfull(null);
         }
 
         private void UpdateAuthorDetails(Author existingAuthor, AuthorDto updatedAuthor)
@@ -46,6 +56,6 @@ namespace Application.Commands.Authors.UpdateAuthor
             existingAuthor.Name = updatedAuthor.Name;
             existingAuthor.BookCategory = updatedAuthor.BookCategory;
         }
-
     }
+
 }

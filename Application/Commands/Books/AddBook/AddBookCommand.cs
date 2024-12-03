@@ -4,7 +4,7 @@ using MediatR;
 
 namespace Application.Commands.Books.AddBook
 {
-    public class AddBookCommand : IRequest<Book>
+    public class AddBookCommand : IRequest<OperationResult<Book>>
     {
         private BookDto bookDto;
 

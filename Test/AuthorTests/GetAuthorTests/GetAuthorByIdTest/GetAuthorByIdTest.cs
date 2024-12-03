@@ -36,9 +36,9 @@ namespace Test.AuthorTests.GetAuthorTests.GetAuthorByIdTest
             var result = await handler.Handle(query, CancellationToken.None);
 
             // Assert
-            Assert.AreEqual(author.Id, result.Id);
-            Assert.AreEqual(author.Name, result.Name);
-            Assert.AreEqual(author.BookCategory, result.BookCategory);
+            Assert.AreEqual(author.Id, result.Data.Id);
+            Assert.AreEqual(author.Name, result.Data.Name);
+            Assert.AreEqual(author.BookCategory, result.Data.BookCategory);
         }
 
         [Test]

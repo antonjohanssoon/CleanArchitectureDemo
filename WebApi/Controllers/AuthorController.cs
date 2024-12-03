@@ -30,7 +30,13 @@ namespace WebApi.Controllers
         [Route("getAllAuthors")]
         public async Task<IActionResult> GetAllAuthors()
         {
-            return Ok(await mediator.Send(new GetAllAuthorsFromDBQuery()));
+            var result = await mediator.Send(new GetAllAuthorsFromDBQuery());
+
+            if (!result.IsSuccessfull)
+            {
+                return BadRequest(new { message = result.Message, errors = result.ErrorMessage });
+            }
+            return Ok(new { message = result.Message, data = result.Data });
         }
 
         // GET api/<AuthorController>/5
@@ -38,7 +44,14 @@ namespace WebApi.Controllers
         [Route("getAuthorById/{authorId}")]
         public async Task<IActionResult> GetAuthorById(Guid authorId)
         {
-            return Ok(await mediator.Send(new GetAuthorByIdQuery(authorId)));
+            var query = new GetAuthorByIdQuery(authorId);
+            var result = await mediator.Send(query);
+
+            if (!result.IsSuccessfull)
+            {
+                return BadRequest(new { message = result.Message, errors = result.ErrorMessage });
+            }
+            return Ok(new { message = result.Message, data = result.Data });
         }
 
         // POST api/<AuthorController>
@@ -46,23 +59,47 @@ namespace WebApi.Controllers
         [Route("addNewAuthor")]
         public async Task<IActionResult> AddNewAuthor([FromBody] Author newAuthor)
         {
-            return Ok(await mediator.Send(new AddAuthorCommand(newAuthor)));
+            var command = new AddAuthorCommand(newAuthor);
+            var result = await mediator.Send(command);
+
+            if (!result.IsSuccessfull)
+            {
+                return BadRequest(new { message = result.Message, errors = result.ErrorMessage });
+            }
+            return Ok(new { message = result.Message, data = result.Data });
+
         }
 
         // PUT api/<AuthorController>/5
         [HttpPut]
-        [Route("updateAuthor/{updatedAuthorId}")]
-        public async Task<IActionResult> UpdateAuthor(Guid updatedAuthorId, [FromBody] AuthorDto updatedAuthor)
+        [Route("updateAuthor/{authorId}")]
+        public async Task<IActionResult> UpdateAuthor(Guid authorId, [FromBody] AuthorDto updatedAuthor)
         {
-            return Ok(await mediator.Send(new UpdateAuthorByIdCommand(updatedAuthorId, updatedAuthor)));
+            var command = new UpdateAuthorByIdCommand(authorId, updatedAuthor);
+            var result = await mediator.Send(command);
+
+            if (!result.IsSuccessfull)
+            {
+                return BadRequest(new { message = result.Message, errors = result.ErrorMessage });
+            }
+
+            return Ok(new { message = result.Message, data = result.Data });
         }
+
 
         // DELETE api/<AuthorController>/5
         [HttpDelete]
         [Route("deleteAuthorById/{authorId}")]
         public async Task<IActionResult> DeleteAuthorById(Guid authorId)
         {
-            return Ok(await mediator.Send(new DeleteAuthorByIdCommand(authorId)));
+            var command = new DeleteAuthorByIdCommand(authorId);
+            var result = await mediator.Send(command);
+
+            if (!result.IsSuccessfull)
+            {
+                return BadRequest(new { message = result.Message, errors = result.ErrorMessage });
+            }
+            return Ok(new { message = result.Message, data = result.Data });
         }
     }
 }

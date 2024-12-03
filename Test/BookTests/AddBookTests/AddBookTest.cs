@@ -36,8 +36,8 @@ namespace Test.BookTests.AddBookTests
 
             // Assert
             mockBookRepository.Verify(repo => repo.Add(It.IsAny<Book>()), Times.Once);
-            Assert.AreEqual(newBook.Title, result.Title);
-            Assert.AreEqual(newBook.Description, result.Description);
+            Assert.AreEqual(newBook.Title, result.Data.Title);
+            Assert.AreEqual(newBook.Description, result.Data.Description);
         }
 
         [Test]

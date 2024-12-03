@@ -4,7 +4,7 @@ using MediatR;
 
 namespace Application.Queries.Users.GetAllUsers
 {
-    public class GetAllUsersQueryHandler : IRequestHandler<GetAllUsersQuery, List<User>>
+    public class GetAllUsersQueryHandler : IRequestHandler<GetAllUsersQuery, OperationResult<List<User>>>
     {
         private readonly IRepository<User> _userRepository;
 
@@ -13,16 +13,16 @@ namespace Application.Queries.Users.GetAllUsers
             _userRepository = userRepository;
         }
 
-        public Task<List<User>> Handle(GetAllUsersQuery request, CancellationToken cancellationToken)
+        public Task<OperationResult<List<User>>> Handle(GetAllUsersQuery request, CancellationToken cancellationToken)
         {
             var users = _userRepository.GetAll().ToList();
 
-            if (users.Count == 0)
+            if (users.Any())
             {
-                throw new Exception($"Your list of users is empty");
+                return Task.FromResult(OperationResult<List<User>>.Successfull(users));
             }
 
-            return Task.FromResult(users);
+            return Task.FromResult(OperationResult<List<User>>.Failure($"Your list of users are empty..."));
         }
     }
 }

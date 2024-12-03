@@ -1,5 +1,4 @@
 ﻿using Application.Commands.Users.AddUser;
-using Application.Dtos;
 using Application.Queries.Users.GetAllUsers;
 using Application.Queries.Users.Login;
 using Domain;
@@ -25,21 +24,43 @@ namespace WebApi.Controllers
         [Route("getAllUsers")]
         public async Task<IActionResult> GetAllUsers()
         {
-            return Ok(await mediator.Send(new GetAllUsersQuery()));
+            var result = await mediator.Send(new GetAllUsersQuery());
+
+            if (!result.IsSuccessfull)
+            {
+                return BadRequest(new { message = result.Message, errors = result.ErrorMessage });
+            }
+            return Ok(new { message = result.Message, data = result.Data });
         }
 
         [HttpPost]
         [Route("addNewUser")]
-        public async Task<IActionResult> RegisterNewUser([FromBody] UserDto newUser)
+        public async Task<IActionResult> RegisterNewUser([FromBody] User newUser)
         {
-            return Ok(await mediator.Send(new AddUserCommand(newUser)));
+            var command = new AddUserCommand(newUser);
+            var result = await mediator.Send(command);
+
+            if (!result.IsSuccessfull)
+            {
+                return BadRequest(new { message = result.Message, errors = result.ErrorMessage });
+            }
+            return Ok(new { message = result.Message, data = result.Data });
         }
 
         [HttpPost]
         [Route("login")]
-        public async Task<IActionResult> LoginUser([FromBody] User userLoggingIn)
+        public async Task<IActionResult> Login([FromBody] User loginUser)
         {
-            return Ok(await mediator.Send(new LoginUserQuery(userLoggingIn)));
+            var query = new LoginUserQuery(loginUser);
+            var result = await mediator.Send(query);
+
+            if (!result.IsSuccessfull)
+            {
+                return Unauthorized(new { message = result.Message, errors = result.ErrorMessage });
+            }
+
+            return Ok(new { message = result.Message, token = result.Data });
         }
+
     }
 }

@@ -39,9 +39,9 @@ namespace Test.BookTests.UpdateBookTests
 
             // Assert
             mockBookRepository.Verify(repo => repo.Update(It.IsAny<Book>()), Times.Once);
-            Assert.AreEqual(updatedBookDto.Title, result.Title);
-            Assert.AreEqual(updatedBookDto.Description, result.Description);
-            Assert.AreEqual(existingBook.Id, result.Id);
+            Assert.AreEqual(updatedBookDto.Title, result.Data.Title);
+            Assert.AreEqual(updatedBookDto.Description, result.Data.Description);
+            Assert.AreEqual(existingBook.Id, result.Data.Id);
         }
 
         [Test]

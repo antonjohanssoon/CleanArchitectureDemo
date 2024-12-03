@@ -5,7 +5,7 @@ using MediatR;
 
 namespace Application.Commands.Books.AddBook
 {
-    public class AddBookCommandHandler : IRequestHandler<AddBookCommand, Book>
+    public class AddBookCommandHandler : IRequestHandler<AddBookCommand, OperationResult<Book>>
     {
         private readonly IRepository<Book> _bookRepository;
 
@@ -14,41 +14,47 @@ namespace Application.Commands.Books.AddBook
             _bookRepository = bookRepository;
         }
 
-        public Task<Book> Handle(AddBookCommand request, CancellationToken cancellationToken)
+        public Task<OperationResult<Book>> Handle(AddBookCommand request, CancellationToken cancellationToken)
         {
-            ValidateBook(request.NewBook);
+            var validationResult = ValidateBook(request.NewBook);
+            if (!validationResult.IsSuccessfull)
+            {
+                return Task.FromResult(validationResult);
+            }
 
             _bookRepository.Add(request.NewBook);
 
-            return Task.FromResult(request.NewBook);
+            return Task.FromResult(OperationResult<Book>.Successfull(request.NewBook, "Book added successfully."));
         }
 
-        private void ValidateBook(Book book)
+        private OperationResult<Book> ValidateBook(Book book)
         {
             if (string.IsNullOrWhiteSpace(book.Title))
             {
-                throw new Exception("Book title is required and cannot be empty.");
+                return OperationResult<Book>.Failure("Book title is required and cannot be empty.");
             }
 
             if (string.IsNullOrWhiteSpace(book.Description))
             {
-                throw new Exception("Book description is required and cannot be empty.");
+                return OperationResult<Book>.Failure("Book description is required and cannot be empty.");
             }
 
-            var existingBookWithSameTitle = _bookRepository.GetAll();
-            if (existingBookWithSameTitle.Any(existingBook =>
-                existingBook.Title.Equals(book.Title, StringComparison.OrdinalIgnoreCase)))
+            var existingBookWithSameTitle = _bookRepository.GetAll()
+                .Any(existingBook => existingBook.Title.Equals(book.Title, StringComparison.OrdinalIgnoreCase));
+            if (existingBookWithSameTitle)
             {
-                throw new Exception($"Book with title '{book.Title}' already exists.");
+                return OperationResult<Book>.Failure($"Book with title '{book.Title}' already exists.");
             }
 
-            var existingBookWithSameDescription = _bookRepository.GetAll();
-            if (existingBookWithSameDescription.Any(existingBook =>
-                existingBook.Description.Equals(book.Description, StringComparison.OrdinalIgnoreCase)))
+            var existingBookWithSameDescription = _bookRepository.GetAll()
+                .Any(existingBook => existingBook.Description.Equals(book.Description, StringComparison.OrdinalIgnoreCase));
+            if (existingBookWithSameDescription)
             {
-                throw new Exception($"Book with description '{book.Description}' already exists.");
+                return OperationResult<Book>.Failure($"Book with description '{book.Description}' already exists.");
             }
+
+            return OperationResult<Book>.Successfull(null);
         }
-
     }
+
 }

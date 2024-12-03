@@ -4,7 +4,7 @@ using MediatR;
 
 namespace Application.Queries.Books.GetBook.GetAll
 {
-    public class GetAllBooksFromDBQueryHandler : IRequestHandler<GetAllBooksFromDBQuery, List<Book>>
+    public class GetAllBooksFromDBQueryHandler : IRequestHandler<GetAllBooksFromDBQuery, OperationResult<List<Book>>>
     {
         private readonly IRepository<Book> _bookRepository;
 
@@ -13,16 +13,16 @@ namespace Application.Queries.Books.GetBook.GetAll
             _bookRepository = bookRepository;
         }
 
-        public Task<List<Book>> Handle(GetAllBooksFromDBQuery request, CancellationToken cancellationToken)
+        public Task<OperationResult<List<Book>>> Handle(GetAllBooksFromDBQuery request, CancellationToken cancellationToken)
         {
             var books = _bookRepository.GetAll().ToList();
 
-            if (books.Count == 0)
+            if (books.Any())
             {
-                throw new Exception($"Your list of books is empty");
+                return Task.FromResult(OperationResult<List<Book>>.Successfull(books));
             }
 
-            return Task.FromResult(books);
+            return Task.FromResult(OperationResult<List<Book>>.Failure($"Your list of books are empty..."));
         }
     }
 }
