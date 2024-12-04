@@ -3,6 +3,7 @@ using Application.Queries.Users.Login;
 using Application.Queries.Users.Login.Helpers;
 using Domain;
 using FakeItEasy;
+using Microsoft.Extensions.Logging;
 
 
 namespace Test.UserTests
@@ -12,12 +13,14 @@ namespace Test.UserTests
     {
         private IRepository<User> _userRepository;
         private TokenHelper _tokenHelper;
+        private ILogger<LoginUserQueryHandler> _fakeLogger;
 
         [SetUp]
         public void SetUp()
         {
             _userRepository = A.Fake<IRepository<User>>();
             _tokenHelper = A.Fake<TokenHelper>();
+            _fakeLogger = A.Fake<ILogger<LoginUserQueryHandler>>();
         }
 
         [Test]
@@ -34,7 +37,7 @@ namespace Test.UserTests
             A.CallTo(() => _tokenHelper.GenerateJwtToken(A<User>.Ignored)).Returns(expectedToken);
 
             var query = new LoginUserQuery(new User { Username = "anton123", Password = "anton123" });
-            var handler = new LoginUserQueryHandler(_userRepository, _tokenHelper);
+            var handler = new LoginUserQueryHandler(_userRepository, _tokenHelper, _fakeLogger);
 
             // Act
             var result = await handler.Handle(query, CancellationToken.None);
@@ -56,7 +59,7 @@ namespace Test.UserTests
             A.CallTo(() => _userRepository.GetAll()).Returns(users);
 
             var query = new LoginUserQuery(new User { Username = "invalidUser", Password = "wrongPassword" });
-            var handler = new LoginUserQueryHandler(_userRepository, _tokenHelper);
+            var handler = new LoginUserQueryHandler(_userRepository, _tokenHelper, _fakeLogger);
 
             // Act
             var result = await handler.Handle(query, CancellationToken.None);
@@ -71,7 +74,7 @@ namespace Test.UserTests
         {
             // Arrange
             var query = new LoginUserQuery(new User { Username = "", Password = "anton123" });
-            var handler = new LoginUserQueryHandler(_userRepository, _tokenHelper);
+            var handler = new LoginUserQueryHandler(_userRepository, _tokenHelper, _fakeLogger);
 
             // Act
             var result = await handler.Handle(query, CancellationToken.None);
@@ -86,7 +89,7 @@ namespace Test.UserTests
         {
             // Arrange
             var query = new LoginUserQuery(new User { Username = "anton123", Password = "" });
-            var handler = new LoginUserQueryHandler(_userRepository, _tokenHelper);
+            var handler = new LoginUserQueryHandler(_userRepository, _tokenHelper, _fakeLogger);
 
             // Act
             var result = await handler.Handle(query, CancellationToken.None);

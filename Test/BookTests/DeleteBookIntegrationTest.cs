@@ -2,6 +2,7 @@
 using Application.Interfaces.RepositoryInterfaces;
 using Domain;
 using FakeItEasy;
+using Microsoft.Extensions.Logging;
 
 namespace Test.BookTests
 {
@@ -11,12 +12,14 @@ namespace Test.BookTests
         private IRepository<Book> _fakeRepository;
         private DeleteBookByIdCommandHandler _handler;
         private List<Book> _bookStorage;
+        private ILogger<DeleteBookByIdCommandHandler> _fakeLogger;
 
         [SetUp]
         public void SetUp()
         {
             _bookStorage = new List<Book>();
             _fakeRepository = A.Fake<IRepository<Book>>();
+            _fakeLogger = A.Fake<ILogger<DeleteBookByIdCommandHandler>>();
 
             A.CallTo(() => _fakeRepository.GetById(A<Guid>._))
                 .ReturnsLazily((Guid id) => _bookStorage.FirstOrDefault(b => b.Id == id));
@@ -24,7 +27,7 @@ namespace Test.BookTests
             A.CallTo(() => _fakeRepository.Delete(A<Book>._))
                 .Invokes((Book book) => _bookStorage.Remove(book));
 
-            _handler = new DeleteBookByIdCommandHandler(_fakeRepository);
+            _handler = new DeleteBookByIdCommandHandler(_fakeRepository, _fakeLogger);
         }
 
         [Test]
