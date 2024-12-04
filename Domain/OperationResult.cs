@@ -5,7 +5,6 @@
         public bool IsSuccessfull { get; private set; }
         public string ErrorMessage { get; private set; }
         public T Data { get; private set; }
-
         public string Message { get; private set; }
 
         public OperationResult(bool isSuccessfull, string errorMessage, T data, string message)
@@ -25,7 +24,6 @@
         {
             return new OperationResult<T>(false, errorMessage, default, message);
         }
-
-
     }
+
 }

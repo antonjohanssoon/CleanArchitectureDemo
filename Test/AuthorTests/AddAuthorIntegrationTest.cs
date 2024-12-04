@@ -2,6 +2,7 @@
 using Application.Interfaces.RepositoryInterfaces;
 using Domain;
 using FakeItEasy;
+using Microsoft.Extensions.Logging;
 
 namespace Test.AuthorTests
 {
@@ -11,12 +12,14 @@ namespace Test.AuthorTests
         private IRepository<Author> _fakeRepository;
         private AddAuthorCommandHandler _handler;
         private List<Author> _authorStorage;
+        private ILogger<AddAuthorCommandHandler> _fakeLogger;
 
         [SetUp]
         public void SetUp()
         {
             _authorStorage = new List<Author>();
             _fakeRepository = A.Fake<IRepository<Author>>();
+            _fakeLogger = A.Fake<ILogger<AddAuthorCommandHandler>>();
 
             A.CallTo(() => _fakeRepository.Add(A<Author>._))
                 .Invokes((Author author) => _authorStorage.Add(author));
@@ -24,7 +27,8 @@ namespace Test.AuthorTests
             A.CallTo(() => _fakeRepository.GetAll())
                 .Returns(_authorStorage);
 
-            _handler = new AddAuthorCommandHandler(_fakeRepository);
+            // Skapa handler med den mockade loggern
+            _handler = new AddAuthorCommandHandler(_fakeRepository, _fakeLogger);
         }
 
         [Test]
@@ -44,6 +48,7 @@ namespace Test.AuthorTests
             var addedAuthor = _authorStorage.FirstOrDefault(a => a.Name == "Stephen King");
             Assert.IsNotNull(addedAuthor, "Author should be added to the repository.");
             Assert.AreEqual("Horror", addedAuthor.BookCategory, "Book category should match.");
+
         }
 
         [Test]
@@ -63,6 +68,7 @@ namespace Test.AuthorTests
             Assert.IsFalse(result.IsSuccessfull, "Operation should fail due to duplicate author.");
             Assert.AreEqual($"Author with name '{newAuthor.Name}' already exists.", result.ErrorMessage);
             Assert.AreEqual(1, _authorStorage.Count, "Repository should still contain only the original author.");
+
         }
 
         [Test]
@@ -77,9 +83,11 @@ namespace Test.AuthorTests
 
             // Assert
             Assert.IsFalse(result.IsSuccessfull, "Operation should fail due to invalid input.");
-            Assert.AreEqual("Author name is required and cannot be empty.", result.ErrorMessage);
+            Assert.AreEqual("Name is required and cannot be empty.", result.ErrorMessage);
             Assert.AreEqual(0, _authorStorage.Count, "Repository should not contain any authors.");
+
         }
     }
+
 
 }

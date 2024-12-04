@@ -40,18 +40,19 @@ namespace Infrastructure.Repositories
             }
         }
 
-        public void Add(T entity)
+        public async Task Add(T entity)
         {
             try
             {
                 _dbSet.Add(entity);
-                _realDatabase.SaveChanges();
+                await _realDatabase.SaveChangesAsync();
             }
             catch (Exception ex)
             {
                 throw new Exception("An error occurred while adding the entity.", ex);
             }
         }
+
 
         public void Update(T entity)
         {

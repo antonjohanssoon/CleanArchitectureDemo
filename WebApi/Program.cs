@@ -1,4 +1,5 @@
 using Application;
+using Domain;
 using Infrastructure;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
@@ -78,6 +79,13 @@ namespace WebApi
 
             builder.Services.AddApplication().AddInfrastructure(builder.Configuration.GetConnectionString("DefaultConnection")!);
 
+            builder.Services.AddLogging(builder =>
+            {
+                builder.AddConsole();
+                builder.AddDebug();
+
+            });
+
 
             var app = builder.Build();
 
@@ -92,6 +100,7 @@ namespace WebApi
 
             app.UseAuthorization();
 
+            app.UseMiddleware<GlobalExceptionMiddleware>();
 
             app.MapControllers();
 

@@ -2,38 +2,54 @@
 using Application.Interfaces.RepositoryInterfaces;
 using Domain;
 using MediatR;
+using Microsoft.Extensions.Logging;
 
 namespace Application.Commands.Authors.UpdateAuthor
 {
     public class UpdateAuthorByIdCommandHandler : IRequestHandler<UpdateAuthorByIdCommand, OperationResult<Author>>
     {
         private readonly IRepository<Author> _authorRepository;
+        private readonly ILogger<UpdateAuthorByIdCommandHandler> _logger;
 
-        public UpdateAuthorByIdCommandHandler(IRepository<Author> authorRepository)
+        public UpdateAuthorByIdCommandHandler(IRepository<Author> authorRepository, ILogger<UpdateAuthorByIdCommandHandler> logger)
         {
             _authorRepository = authorRepository;
+            _logger = logger;
         }
 
-        public Task<OperationResult<Author>> Handle(UpdateAuthorByIdCommand request, CancellationToken cancellationToken)
+        public async Task<OperationResult<Author>> Handle(UpdateAuthorByIdCommand request, CancellationToken cancellationToken)
         {
-            var authorToUpdate = _authorRepository.GetById(request.Id);
-            if (authorToUpdate == null)
+            try
             {
-                return Task.FromResult(OperationResult<Author>.Failure($"Author with ID {request.Id} not found."));
-            }
+                _logger.LogInformation("Handling UpdateAuthorByIdCommand for author with ID: {AuthorId}", request.Id);
 
-            // Validera uppdaterade författarens information
-            var validationResult = ValidateUpdatedAuthor(request.UpdatedAuthor);
-            if (!validationResult.IsSuccessfull)
+                var authorToUpdate = _authorRepository.GetById(request.Id);
+                if (authorToUpdate == null)
+                {
+                    _logger.LogWarning("Attempted to update author with ID: {AuthorId}, but no author was found.", request.Id);
+                    return OperationResult<Author>.Failure($"Author with ID {request.Id} not found.");
+                }
+
+                var validationResult = ValidateUpdatedAuthor(request.UpdatedAuthor);
+                if (!validationResult.IsSuccessfull)
+                {
+                    _logger.LogWarning("Validation failed for author update. Author name: {AuthorName}, BookCategory: {BookCategory}. Error: {ErrorMessage}",
+                        request.UpdatedAuthor.Name, request.UpdatedAuthor.BookCategory, validationResult.ErrorMessage);
+                    return validationResult;
+                }
+
+                UpdateAuthorDetails(authorToUpdate, request.UpdatedAuthor);
+                _authorRepository.Update(authorToUpdate);
+
+                _logger.LogInformation("Author with ID: {AuthorId} was successfully updated.", request.Id);
+
+                return OperationResult<Author>.Successfull(authorToUpdate, "Author updated successfully.");
+            }
+            catch (Exception ex)
             {
-                return Task.FromResult(validationResult);
+                _logger.LogError(ex, "An error occurred while updating author with ID: {AuthorId}", request.Id);
+                return OperationResult<Author>.Failure("An unexpected error occurred while updating the author.");
             }
-
-            UpdateAuthorDetails(authorToUpdate, request.UpdatedAuthor);
-
-            _authorRepository.Update(authorToUpdate);
-
-            return Task.FromResult(OperationResult<Author>.Successfull(authorToUpdate, "Author updated successfully."));
         }
 
         private OperationResult<Author> ValidateUpdatedAuthor(AuthorDto updatedAuthor)
@@ -57,5 +73,5 @@ namespace Application.Commands.Authors.UpdateAuthor
             existingAuthor.BookCategory = updatedAuthor.BookCategory;
         }
     }
-
 }
+
